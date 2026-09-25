@@ -1,0 +1,5 @@
+<%= form_with model: channel, scope: :channel, url: (channel.persisted? ? admin_channel_path(channel) : admin_workspace_channels_path(@workspace)) do |f| %>
+  <p><%= f.label :name %><%= f.text_field :name %></p>
+  <p><%= f.label :kind %><%= f.select :kind, Channel::KINDS %></p>
+  <p><%= f.submit %></p>
+<% end %>

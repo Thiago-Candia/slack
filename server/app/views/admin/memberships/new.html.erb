@@ -1,0 +1,7 @@
+<h1>Nuevo membership</h1>
+<%= form_with model: [:admin, @membership] do |f| %>
+  <p><%= f.label :user_id %><%= f.collection_select :user_id, User.order(:name), :id, :name %></p>
+  <p><%= f.label :workspace_id %><%= f.collection_select :workspace_id, Workspace.order(:name), :id, :name %></p>
+  <p><%= f.label :role %><%= f.select :role, Membership::ROLES %></p>
+  <p><%= f.submit %></p>
+<% end %>

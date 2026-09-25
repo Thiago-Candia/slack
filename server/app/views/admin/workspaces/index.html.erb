@@ -1,0 +1,15 @@
+<h1>Workspaces</h1>
+<%= link_to "Nuevo workspace", new_admin_workspace_path %>
+<table>
+  <tr><th>Nombre</th><th>Dueño</th><th></th></tr>
+  <% @workspaces.each do |workspace| %>
+    <tr>
+      <td><%= link_to workspace.name, admin_workspace_path(workspace) %></td>
+      <td><%= workspace.owner.name %></td>
+      <td>
+        <%= link_to "Editar", edit_admin_workspace_path(workspace) %>
+        <%= button_to "Eliminar", admin_workspace_path(workspace), method: :delete %>
+      </td>
+    </tr>
+  <% end %>
+</table>

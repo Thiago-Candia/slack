@@ -1,0 +1,15 @@
+<h1>Canales de <%= @workspace.name %></h1>
+<%= link_to "Nuevo canal", new_admin_workspace_channel_path(@workspace) %>
+<table>
+  <tr><th>Nombre</th><th>Tipo</th><th></th></tr>
+  <% @channels.each do |channel| %>
+    <tr>
+      <td><%= link_to channel.name || "Directo", admin_channel_path(channel) %></td>
+      <td><%= channel.kind %></td>
+      <td>
+        <%= link_to "Editar", edit_admin_channel_path(channel) %>
+        <%= button_to "Eliminar", admin_channel_path(channel), method: :delete %>
+      </td>
+    </tr>
+  <% end %>
+</table>

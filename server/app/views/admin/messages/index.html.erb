@@ -1,0 +1,12 @@
+<h1>Mensajes</h1>
+<table>
+  <tr><th>Autor</th><th>Canal</th><th>Cuerpo</th><th></th></tr>
+  <% @messages.each do |message| %>
+    <tr>
+      <td><%= message.user.name %></td>
+      <td><%= message.channel.name || "Directo" %></td>
+      <td><%= link_to message.body.truncate(60), admin_message_path(message) %></td>
+      <td><%= button_to "Eliminar", admin_message_path(message), method: :delete %></td>
+    </tr>
+  <% end %>
+</table>

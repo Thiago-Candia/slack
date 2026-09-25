@@ -1,0 +1,4 @@
+<%= form_with model: [:admin, workspace] do |f| %>
+  <p><%= f.label :name %><%= f.text_field :name %></p>
+  <p><%= f.submit %></p>
+<% end %>

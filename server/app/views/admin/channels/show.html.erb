@@ -1,0 +1,5 @@
+<h1><%= @channel.name || "Canal directo" %></h1>
+<p>Workspace: <%= @channel.workspace.name %></p>
+<p>Tipo: <%= @channel.kind %></p>
+<%= link_to "Editar", edit_admin_channel_path(@channel) %>
+<%= link_to "Volver", admin_workspace_path(@channel.workspace) %>

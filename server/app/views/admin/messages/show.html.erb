@@ -1,0 +1,5 @@
+<h1>Mensaje</h1>
+<p><%= @message.user.name %> en <%= @message.channel.name || "Directo" %></p>
+<p><%= @message.body %></p>
+<%= button_to "Eliminar", admin_message_path(@message), method: :delete %>
+<%= link_to "Volver", admin_messages_path %>
