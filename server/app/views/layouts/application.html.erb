@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Slack Clone Admin</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <style>
+      body { font-family: sans-serif; margin: 0; }
+      nav { background: #1a1d21; padding: 12px 20px; }
+      nav a, nav span { color: #fff; margin-right: 16px; text-decoration: none; }
+      main { padding: 24px; max-width: 960px; margin: 0 auto; }
+      table { width: 100%; border-collapse: collapse; }
+      th, td { text-align: left; padding: 8px; border-bottom: 1px solid #ddd; }
+    </style>
+  </head>
+  <body>
+    <% if current_admin %>
+      <nav>
+        <%= link_to "Dashboard", admin_root_path %>
+        <%= link_to "Usuarios", admin_users_path %>
+        <%= link_to "Workspaces", admin_workspaces_path %>
+        <%= link_to "Memberships", admin_memberships_path %>
+        <%= link_to "Mensajes", admin_messages_path %>
+        <span><%= current_admin.name %></span>
+        <%= button_to "Salir", admin_session_path, method: :delete %>
+      </nav>
+    <% end %>
+    <main>
+      <% flash.each do |_type, message| %>
+        <p><%= message %></p>
+      <% end %>
+      <%= yield %>
+    </main>
+  </body>
+</html>
