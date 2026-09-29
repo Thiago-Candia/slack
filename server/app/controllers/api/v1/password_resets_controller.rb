@@ -1,8 +1,10 @@
 class Api::V1::PasswordResetsController < Api::BaseController
   def create
     user = User.find_by(email: params[:email]&.downcase)
-    user&.update!(reset_password_token: SecureRandom.urlsafe_base64, reset_password_sent_at: Time.current)
-    render json: { message: "Si el email existe, se generó un enlace", reset_token: user&.reset_password_token }
+    user&.update!(reset_password_token: 
+      SecureRandom.urlsafe_base64, reset_password_sent_at: Time.current)
+      UserMailer.password_reset_email(user).deliver_later if user
+      render json: { message: "Si el email existe, se generó un enlace" }
   end
 
   def update
