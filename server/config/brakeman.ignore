@@ -1,0 +1,51 @@
+{
+  "ignored_warnings": [
+    {
+      "warning_type": "Mass Assignment",
+      "warning_code": 105,
+      "fingerprint": "6e8d843109850b585d4a68cb6da4d2a47b0f547bf1c3ed0113c8828d02ee9d6e",
+      "check_name": "PermitAttributes",
+      "message": "Potentially dangerous key allowed for mass assignment",
+      "file": "app/controllers/admin/memberships_controller.rb",
+      "line": 28,
+      "link": "https://brakemanscanner.org/docs/warning_types/mass_assignment/",
+      "code": "params.require(:membership).permit(:user_id, :workspace_id, :role)",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Admin::MembershipsController",
+        "method": "membership_params"
+      },
+      "user_input": ":role",
+      "confidence": "Medium",
+      "cwe_id": [
+        915
+      ],
+      "note": "Admin::MembershipsController requiere autenticación de admin (before_action :require_admin en Admin::BaseController); el rol solo puede ser asignado por un administrador autenticado, no por el usuario final."
+    },
+    {
+      "warning_type": "Mass Assignment",
+      "warning_code": 105,
+      "fingerprint": "85c079263018a082237a313c39f8dc4f12def1427f239acb1023fb826b305562",
+      "check_name": "PermitAttributes",
+      "message": "Potentially dangerous key allowed for mass assignment",
+      "file": "app/controllers/admin/users_controller.rb",
+      "line": 48,
+      "link": "https://brakemanscanner.org/docs/warning_types/mass_assignment/",
+      "code": "params.require(:user).permit(:name, :email, :password, :admin)",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Admin::UsersController",
+        "method": "user_params"
+      },
+      "user_input": ":admin",
+      "confidence": "High",
+      "cwe_id": [
+        915
+      ],
+      "note": "Admin::UsersController requiere autenticación de admin (before_action :require_admin en Admin::BaseController); solo un administrador autenticado puede promover/degradar el campo admin de otro usuario, es la función esperada del backoffice."
+    }
+  ],
+  "brakeman_version": "8.0.6"
+}
