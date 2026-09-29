@@ -9,7 +9,7 @@ class Api::V1::PasswordResetsController < Api::BaseController
     user = User.find_by(reset_password_token: params[:token])
 
     if user.nil? || user.reset_password_sent_at < 2.hours.ago
-      return render json: { errors: ["Enlace inválido o expirado"] }, status: :unprocessable_entity
+      return render json: { errors: [ "Enlace inválido o expirado" ] }, status: :unprocessable_entity
     end
 
     if user.update(password: params[:password], reset_password_token: nil, reset_password_sent_at: nil)
