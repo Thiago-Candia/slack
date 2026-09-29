@@ -1,0 +1,4 @@
+welcome:
+  channel: general
+  user: alice
+  body: Bienvenidos al workspace
