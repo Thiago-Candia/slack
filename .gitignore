@@ -1,0 +1,52 @@
+# Red de seguridad a nivel raíz. client/ y server/ tienen además sus propios .gitignore.
+
+# Frontent
+client/
+
+#docs
+/docs
+
+# wireframes
+wireframes/
+
+# Secretos y variables de entorno (se permiten solo los ejemplos)
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+*.p12
+master.key
+
+# Dependencias y builds
+node_modules/
+dist/
+dist-ssr/
+.bundle/
+vendor/bundle/
+
+# Logs, temporales y almacenamiento local
+*.log
+log/*
+!log/.keep
+tmp/*
+!tmp/.keep
+storage/*
+!storage/.keep
+.byebug_history
+
+# Reportes de cobertura y auditoría
+coverage/
+
+# Parches sin resolver
+*.orig
+*.rej
+
+# Editor / sistema operativo
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
