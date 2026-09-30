@@ -1,0 +1,7 @@
+alice_general:
+  user: alice
+  channel: general
+
+bob_general:
+  user: bob
+  channel: general

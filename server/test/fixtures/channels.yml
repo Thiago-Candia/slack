@@ -1,0 +1,4 @@
+general:
+  workspace: acme
+  name: general
+  kind: public

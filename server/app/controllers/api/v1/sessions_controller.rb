@@ -5,7 +5,7 @@ class Api::V1::SessionsController < Api::BaseController
     if user&.authenticate(params[:password])
       render json: { token: JsonWebToken.encode(user_id: user.id), user: UserSerializer.new(user).as_json }
     else
-      render json: { errors: ["Email o contraseña inválidos"] }, status: :unauthorized
+      render json: { errors: [ "Email o contraseña inválidos" ] }, status: :unauthorized
     end
   end
 

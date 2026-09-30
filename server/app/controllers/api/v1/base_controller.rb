@@ -8,7 +8,7 @@ class Api::V1::BaseController < Api::BaseController
     payload = token && JsonWebToken.decode(token)
     @current_user = payload && User.find_by(id: payload[:user_id])
 
-    render json: { errors: ["No autorizado"] }, status: :unauthorized unless @current_user
+    render json: { errors: [ "No autorizado" ] }, status: :unauthorized unless @current_user
   end
 
   def current_user
