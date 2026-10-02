@@ -5,6 +5,7 @@ client/
 
 #docs
 /docs
+.claude/
 
 # wireframes
 wireframes/
