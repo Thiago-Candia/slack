@@ -1,5 +1,6 @@
 class Api::V1::WorkspacesController < Api::V1::BaseController
   before_action :set_workspace, only: %i[show update destroy invite]
+  before_action :authorize_owner!, only: %i[update destroy]
 
   def index
     render json: current_user.workspaces.map { |w| WorkspaceSerializer.new(w).as_json }
@@ -53,5 +54,9 @@ class Api::V1::WorkspacesController < Api::V1::BaseController
 
   def set_workspace
     @workspace = current_user.workspaces.find(params[:id])
+  end
+
+  def authorize_owner!
+    render_forbidden unless @workspace.owned_by?(current_user)
   end
 end

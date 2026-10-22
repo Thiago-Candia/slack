@@ -38,7 +38,7 @@ Rails.application.routes.draw do
           resources :messages, only: %i[index create destroy], shallow: true
         end
 
-        resources :direct_messages, only: %i[index create], param: :user_id
+        resources :direct_messages, only: %i[index create], path: "direct_messages/:user_id"
         resources :memberships, only: %i[index create destroy]
       end
     end
