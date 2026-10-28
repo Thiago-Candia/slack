@@ -1,0 +1,13 @@
+es:
+  activerecord:
+    attributes:
+      user:
+        name: Nombre
+        email: Email
+        password: Contraseña
+      workspace:
+        name: Nombre
+      channel:
+        name: Nombre
+      message:
+        body: Mensaje

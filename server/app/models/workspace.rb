@@ -11,6 +11,10 @@ class Workspace < ApplicationRecord
 
   validates :name, presence: true
 
+  def owned_by?(user)
+    owner_id == user.id
+  end
+
   def regenerate_invite_token!
     update!(invite_token: SecureRandom.urlsafe_base64(16))
   end
