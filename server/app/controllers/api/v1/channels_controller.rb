@@ -42,7 +42,7 @@ class Api::V1::ChannelsController < Api::V1::BaseController
   end
 
   def set_channel
-    @channel = current_user.channels.find(params[:id])
+    @channel = Channel.accessible_by(current_user).find(params[:id])
   end
 
   def authorize_owner!

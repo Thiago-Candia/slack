@@ -10,6 +10,14 @@ class Channel < ApplicationRecord
 
   scope :direct, -> { where(kind: "direct") }
 
+  # Los canales públicos se abren a todo miembro del workspace; los privados y
+  # los directos, solo a quienes figuran en channel_memberships.
+  scope :accessible_by, lambda { |user|
+    in_user_workspaces = where(workspace: user.workspaces)
+    in_user_workspaces.where(kind: "public")
+      .or(in_user_workspaces.where(id: user.channel_memberships.select(:channel_id)))
+  }
+
   validates :kind, presence: true, inclusion: { in: KINDS }
   validates :name, presence: true, uniqueness: { scope: :workspace_id, case_sensitive: false }, unless: :direct?
 
