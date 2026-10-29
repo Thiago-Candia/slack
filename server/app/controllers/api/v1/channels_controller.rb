@@ -1,6 +1,7 @@
 class Api::V1::ChannelsController < Api::V1::BaseController
   before_action :set_workspace, only: %i[index create]
   before_action :set_channel, only: %i[show update destroy]
+  before_action :authorize_owner!, only: %i[update destroy]
 
   def index
     render json: @workspace.channels.where.not(kind: "direct").map { |c| ChannelSerializer.new(c).as_json }
@@ -41,6 +42,10 @@ class Api::V1::ChannelsController < Api::V1::BaseController
   end
 
   def set_channel
-    @channel = current_user.channels.find(params[:id])
+    @channel = Channel.accessible_by(current_user).find(params[:id])
+  end
+
+  def authorize_owner!
+    render_forbidden unless @channel.workspace.owned_by?(current_user)
   end
 end
