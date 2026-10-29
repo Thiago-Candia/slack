@@ -1,8 +1,5 @@
 # Red de seguridad a nivel raíz. client/ y server/ tienen además sus propios .gitignore.
 
-# Frontent
-client/
-
 #docs
 /docs
 .claude/

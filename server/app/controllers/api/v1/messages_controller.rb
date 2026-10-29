@@ -12,7 +12,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
   private
 
   def set_channel
-    @channel = current_user.channels.find(params[:channel_id])
+    @channel = Channel.accessible_by(current_user).find(params[:channel_id])
   end
 
   def set_message

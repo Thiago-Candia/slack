@@ -10,9 +10,21 @@ Clon de Slack con espacios de trabajo, canales y mensajes directos.
 
 ## Estado
 
-- El frontend ya no depende de MongoDB. Ver [client/docs/limpieza-mongodb.md](client/docs/limpieza-mongodb.md).
-- La conexión entre el frontend y el backend en Rails está pendiente.
-- El backend tiene modelos y migraciones. Los controladores declarados en `config/routes.rb` todavía no están implementados.
+- El backend expone la API REST en `/api/v1` con autenticación JWT y mantiene el back-office en `/admin`.
+- El frontend consume esa API: registro, inicio de sesión, recuperación de contraseña, workspaces, invitaciones, canales, mensajes, mensajes directos y perfil.
+
+## Rutas del frontend
+
+| Ruta | Pantalla | Acceso |
+|---|---|---|
+| `/login`, `/register` | Iniciar sesión / crear cuenta | Pública |
+| `/reset-password`, `/rewrite-password?reset_token=…` | Recuperar contraseña | Pública |
+| `/home` | Mis espacios de trabajo | Con sesión |
+| `/new-workspace` | Crear espacio de trabajo | Con sesión |
+| `/join/:token` | Unirse por link de invitación | Con sesión (sin sesión, pasa por el login y vuelve) |
+| `/workspace/:workspace_id` | Espacio de trabajo | Con sesión |
+| `/workspace/:workspace_id/channel/:channel_id` | Chat de canal | Con sesión |
+| `/workspace/:workspace_id/dm/:user_id` | Mensaje directo | Con sesión |
 
 ## Requisitos
 
@@ -43,6 +55,10 @@ bin/rails server
 
 Se sirve en `http://localhost:3000`.
 
+### Datos de prueba
+
+`bin/rails db:seed` crea las cuentas `admin@example.com` y `ana@example.com` (contraseña `password123`) dentro del workspace "Cátedra Programación IV".
+
 ## Variables de entorno
 
 Nunca se suben al repositorio. Solo se versionan los archivos `.env.example`.
@@ -64,6 +80,8 @@ Nunca se suben al repositorio. Solo se versionan los archivos `.env.example`.
 | `npm run dev` | Servidor de desarrollo |
 | `npm run build` | Build de producción en `client/dist` |
 | `npm run lint` | ESLint |
+| `npm test` | Tests con Vitest y Testing Library |
+| `npm run test:watch` | Tests en modo observador |
 | `npm run preview` | Sirve el build localmente |
 
 ## Despliegue del frontend
