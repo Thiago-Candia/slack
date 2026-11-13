@@ -15,9 +15,10 @@ Cliente web en React para la API de `server/`. Permite crear una cuenta, entrar 
 7. [Rutas](#rutas)
 8. [Sesión y autenticación](#sesión-y-autenticación)
 9. [Comunicación con la API](#comunicación-con-la-api)
-10. [Errores y estados de pantalla](#errores-y-estados-de-pantalla)
-11. [Convenciones](#convenciones)
-12. [Limitaciones conocidas](#limitaciones-conocidas)
+10. [Tiempo real (WebSocket)](#tiempo-real-websocket)
+11. [Errores y estados de pantalla](#errores-y-estados-de-pantalla)
+12. [Convenciones](#convenciones)
+13. [Limitaciones conocidas](#limitaciones-conocidas)
 
 ## Inicio rápido
 
@@ -37,7 +38,7 @@ npm install
 npm run dev
 ```
 
-Abrí `http://localhost:5173`. Usá `localhost` y no `127.0.0.1`: el backend solo acepta pedidos (CORS) desde `http://localhost:5173`.
+Abrí `http://localhost:5173`. Usá `localhost` y no `127.0.0.1`: el backend solo acepta pedidos (CORS) y conexiones WebSocket desde `http://localhost:5173`.
 
 **Usuarios de prueba** (los crea `bin/rails db:seed` en `server/`):
 
@@ -65,7 +66,7 @@ Configuración que cambia según dónde corre la app. Va en `client/.env` (no se
 
 | Variable | Ejemplo | Para qué |
 |---|---|---|
-| `VITE_URL_API` | `http://localhost:3000` | URL base del backend. Si falta, se usa ese mismo valor. |
+| `VITE_URL_API` | `http://localhost:3000` | URL base del backend. Si falta, se usa ese mismo valor. De ahí sale también la URL del WebSocket (`ws://localhost:3000/cable`). |
 
 Las variables `VITE_*` quedan visibles en el navegador. Nunca pongas secretos ahí.
 
@@ -78,11 +79,12 @@ Qué herramientas usa el proyecto y para qué.
 | React 19 | Construir la interfaz con componentes. |
 | Vite 7 | Servidor de desarrollo y build de producción. |
 | react-router-dom 7 | Navegación entre pantallas (rutas). |
+| @rails/actioncable | Cliente WebSocket para recibir mensajes en tiempo real. |
 | Vitest 5 | Correr los tests. |
 | Testing Library | Probar componentes como los usaría una persona. |
 | ESLint 9 | Detectar errores y malas prácticas en el código. |
 
-No hay librerías de estado global, de UI ni de pedidos HTTP: alcanza con React y `fetch`.
+No hay librerías de estado global, de UI ni de pedidos HTTP: alcanza con React y `fetch`. Para el tiempo real se usa el cliente oficial de Action Cable.
 
 ## Estructura de carpetas
 
@@ -91,9 +93,9 @@ Dónde está cada cosa dentro de `src/`.
 ```text
 src/
 ├── config/          URL de la API (lee VITE_URL_API)
-├── services/        Pedidos a la API: httpClient + un servicio por recurso
+├── services/        Pedidos a la API (httpClient + un servicio por recurso) y conexión WebSocket (cable.js)
 ├── context/         Estado compartido: sesión (AuthContext) y datos del usuario (WorkspaceContext)
-├── hooks/           Lógica reutilizable: cargar datos, enviar formularios, previsualizar imágenes
+├── hooks/           Lógica reutilizable: cargar datos, enviar formularios, previsualizar imágenes, suscribirse al tiempo real
 ├── components/      Piezas de interfaz reutilizables (modal, campos, avatar, conversación…)
 │   └── workspace/   Piezas propias de la vista del workspace (barra lateral, modales)
 ├── screens/         Una pantalla por ruta
@@ -168,6 +170,7 @@ Cómo sabe la app quién la está usando.
 - Un 401 en el login (credenciales incorrectas) no cierra nada: solo muestra el error.
 - **Cerrar sesión** (desde el modal de perfil) borra el token y vuelve a `/login`. El servidor no invalida el token: simplemente deja de usarse.
 - Si cerrás sesión en una pestaña, las demás se enteran por el evento `storage` del navegador.
+- Al cerrar sesión o vencer el token, `AuthContext` llama a `closeConsumer()` y se cierra la conexión WebSocket.
 
 ## Comunicación con la API
 
@@ -218,6 +221,30 @@ export const channelService = {
 
 La API devuelve solo el `invite_token`. El link completo (`<origen del front>/join/<token>`) lo arma `InviteModal`.
 
+## Tiempo real (WebSocket)
+
+Cómo llegan los mensajes de otras personas sin recargar. El servidor usa Action Cable (el diseño completo está en el README de la raíz).
+
+| Pieza | Archivo | Responsabilidad |
+|---|---|---|
+| Consumer | `src/services/cable.js` | Abre un único WebSocket a `URL_CABLE` con el token actual (`?token=`). `closeConsumer()` lo cierra. |
+| Hook | `src/hooks/useConversationSubscription.js` | Se suscribe a `ConversationChannel` con los parámetros de la conversación y se desuscribe al desmontar. |
+| Componente | `src/components/Conversation.jsx` | Agrega al listado cada evento `message.created`. |
+
+```jsx
+<Conversation
+  subscription={{ channel_id: channel.id }}
+  /* ... */
+/>
+```
+
+Para un mensaje directo, la suscripción es `{ workspace_id, user_id }`.
+
+- **Sin duplicados:** `Conversation` ignora un mensaje cuyo `id` ya está en la lista. Así, el propio mensaje (respuesta HTTP y evento) aparece una sola vez.
+- **Reconexión:** si se corta la conexión y vuelve, el hook avisa y `Conversation` recarga los mensajes para recuperar los que se perdieron.
+- **Envío:** sigue siendo `POST` por HTTP. El WebSocket solo recibe.
+- **Autenticación:** el token se lee en cada intento de conexión, así que una reconexión usa el token vigente.
+
 ## Errores y estados de pantalla
 
 Cómo se muestra lo que pasa mientras se carga o cuando algo falla.
@@ -252,7 +279,7 @@ Reglas que sigue el código para que todo se vea igual.
 
 Comportamientos actuales que conviene conocer. Están confirmados en el código y en la API.
 
-- **Sin actualización automática**: los mensajes de otras personas aparecen al volver a abrir la conversación o al recargar.
+- **Solo los mensajes son en tiempo real**: los canales nuevos, los miembros nuevos y los mensajes borrados no se actualizan solos. Aparecen al recargar.
 - **Historial completo**: cada conversación carga todos sus mensajes, sin paginar.
 - **Acciones sin interfaz**: la API permite editar o borrar workspaces y canales, gestionar miembros por email y borrar mensajes, pero la interfaz todavía no lo ofrece.
 - **Avatar al registrarse**: el registro pide nombre, email y contraseña. La foto se sube después, desde el perfil.
