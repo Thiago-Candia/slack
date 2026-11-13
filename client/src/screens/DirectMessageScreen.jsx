@@ -27,6 +27,7 @@ const DirectMessageScreen = () => {
       placeholder={`Escribe un mensaje a ${member.name}`}
       loadMessages={() => directMessageService.getMessages(workspace.id, member.id)}
       sendMessage={(body) => directMessageService.sendMessage(workspace.id, member.id, body)}
+      subscription={{workspace_id: workspace.id, user_id: member.id}}
     />
   );
 };

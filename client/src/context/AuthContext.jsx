@@ -1,4 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { closeConsumer } from "../services/cable";
 import { AUTH_EXPIRED_EVENT } from "../services/httpClient";
 import { TOKEN_KEY, clearToken, getToken, setToken } from "../services/session";
 
@@ -10,6 +11,7 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const handleExpired = () => {
+      closeConsumer();
       setTokenState(null);
       setSessionExpired(true);
     };
@@ -34,6 +36,7 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const logout = useCallback(() => {
+    closeConsumer();
     clearToken();
     setTokenState(null);
     setSessionExpired(false);

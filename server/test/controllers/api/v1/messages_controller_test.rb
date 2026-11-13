@@ -1,6 +1,8 @@
 require "test_helper"
 
 class Api::V1::MessagesControllerTest < ActionDispatch::IntegrationTest
+  include ActionCable::TestHelper
+
   test "lista los mensajes del canal" do
     get api_v1_channel_messages_path(channels(:general)), headers: auth_headers(users(:alice))
 
@@ -28,5 +30,21 @@ class Api::V1::MessagesControllerTest < ActionDispatch::IntegrationTest
     end
 
     assert_response :unprocessable_entity
+  end
+
+  test "emite un broadcast al crear un mensaje" do
+    assert_broadcasts(ConversationChannel.broadcasting_for(channels(:general)), 1) do
+      post api_v1_channel_messages_path(channels(:general)),
+        params: { body: "Hola en vivo" },
+        headers: auth_headers(users(:bob))
+    end
+  end
+
+  test "no emite broadcast si el mensaje es invalido" do
+    assert_no_broadcasts(ConversationChannel.broadcasting_for(channels(:general))) do
+      post api_v1_channel_messages_path(channels(:general)),
+        params: { body: "" },
+        headers: auth_headers(users(:bob))
+    end
   end
 end
