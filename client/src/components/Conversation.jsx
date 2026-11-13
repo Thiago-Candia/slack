@@ -1,10 +1,11 @@
 import { useCallback, useId } from "react";
+import { useConversationSubscription } from "../hooks/useConversationSubscription";
 import { useResource } from "../hooks/useResource";
 import MessageComposer from "./MessageComposer";
 import MessageList from "./MessageList";
 
 
-const Conversation = ({ title, subtitle, placeholder, loadMessages, sendMessage, describeError }) => {
+const Conversation = ({ title, subtitle, placeholder, loadMessages, sendMessage, describeError, subscription }) => {
   const titleId = useId();
   const { status, data, error, reload, setData } = useResource(loadMessages);
   const messages = Array.isArray(data) ? data : [];
@@ -19,6 +20,15 @@ const Conversation = ({ title, subtitle, placeholder, loadMessages, sendMessage,
     },
     [setData]
   );
+
+  useConversationSubscription(subscription, {
+    onMessage: (event) => {
+      if (event.type === "message.created") addMessage(event.message);
+    },
+    onReconnect: () => {
+      loadMessages().then(setData).catch(() => {});
+    }
+  });
 
   const handleSend = async (body) => {
     const message = await sendMessage(body);
