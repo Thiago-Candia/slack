@@ -69,7 +69,7 @@ const MessageList = ({ status, messages, error, errorMessage, onRetry }) => {
           return (
             <Fragment key={message.id}>
               {startsDay(message, previous) && (
-                <li className="message-day">
+                <li className="message-day" role="presentation">
                   <time dateTime={message.created_at}>{dayLabel(message.created_at)}</time>
                 </li>
               )}

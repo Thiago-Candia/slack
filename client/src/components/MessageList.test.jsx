@@ -46,9 +46,11 @@ describe("MessageList", () => {
       />
     );
 
-    const separators = screen.getAllByRole("listitem").filter((item) => item.classList.contains("message-day"));
+    const separators = document.querySelectorAll(".message-day");
 
-    expect(separators.map((item) => item.textContent)).toEqual(["Ayer", "Hoy"]);
+    expect([...separators].map((item) => item.textContent)).toEqual(["Ayer", "Hoy"]);
+    // Los separadores no cuentan como mensajes para los lectores de pantalla.
+    expect(screen.getAllByRole("listitem")).toHaveLength(3);
   });
 
   it("vuelve a mostrar el autor al cambiar de día aunque sea la misma persona", () => {
