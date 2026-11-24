@@ -197,16 +197,20 @@
 }
 
 .conversation__header {
-  padding: 0.9rem 1.5rem;
+  padding: 1rem 1.5rem 0.85rem;
   border-bottom: 1px solid var(--color-border);
 }
 
 .conversation__title {
-  font-size: 1.2rem;
+  font-size: 1.35rem;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
   overflow-wrap: anywhere;
 }
 
 .conversation__subtitle {
+  margin-top: 0.15rem;
   font-size: 0.85rem;
   color: var(--color-muted);
   overflow-wrap: anywhere;
@@ -223,6 +227,51 @@
   display: flex;
   align-items: flex-start;
   padding: 1.5rem;
+}
+
+.conversation-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  max-width: 24rem;
+  margin: auto;
+  text-align: center;
+}
+
+.conversation-empty__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border: 1px dashed var(--color-muted);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-muted);
+  color: var(--color-accent);
+}
+
+.conversation-empty .state {
+  align-items: center;
+  padding: 0;
+}
+
+.message-day {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 1rem 1.5rem 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--color-muted);
+}
+
+.message-day::before,
+.message-day::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--color-border);
 }
 
 .message {
@@ -270,6 +319,10 @@
 
 .message__author {
   font-weight: 700;
+}
+
+.message__author--own {
+  color: var(--color-accent);
 }
 
 .message__time {
