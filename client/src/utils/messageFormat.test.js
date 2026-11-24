@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { applyFormat, parseInline, parseMessage } from "./messageFormat";
+import source from "./messageFormat.js?raw";
 
 describe("parseInline", () => {
   it("devuelve texto plano sin marcas", () => {
@@ -50,6 +51,49 @@ describe("parseInline", () => {
 
   it("no crea enlaces con otros protocolos", () => {
     expect(parseInline("[x](javascript:alert(1))")).toEqual([{ type: "text", value: "[x](javascript:alert(1))" }]);
+  });
+
+  it("no cambia una cuenta con asteriscos separados por espacios", () => {
+    expect(parseInline("2 * 3 * 4 = 24")).toEqual([{ type: "text", value: "2 * 3 * 4 = 24" }]);
+  });
+
+  it("no aplica formato si la marca queda pegada a un espacio interior", () => {
+    expect(parseInline("_ hola _ y * chau *")).toEqual([{ type: "text", value: "_ hola _ y * chau *" }]);
+  });
+
+  it("no interpreta marcas dentro de una URL suelta", () => {
+    expect(parseInline("mirá http://ej.com/_algo_/x y *esto*")).toEqual([
+      { type: "text", value: "mirá http://ej.com/_algo_/x y " },
+      { type: "bold", children: [{ type: "text", value: "esto" }] }
+    ]);
+  });
+
+  it("acepta paréntesis balanceados dentro de la URL de un enlace", () => {
+    expect(parseInline("[wiki](https://es.wikipedia.org/wiki/Slack_(software))")).toEqual([
+      { type: "link", href: "https://es.wikipedia.org/wiki/Slack_(software)", label: "wiki" }
+    ]);
+  });
+
+  it("no abre formato con la marca pegada a una letra o duplicada", () => {
+    expect(parseInline("a*b* y **c**")).toEqual([{ type: "text", value: "a*b* y **c**" }]);
+  });
+
+  it("aplica formato después de un bloque de código", () => {
+    expect(parseInline("`x`, *y*")).toEqual([
+      { type: "code", value: "x" },
+      { type: "text", value: ", " },
+      { type: "bold", children: [{ type: "text", value: "y" }] }
+    ]);
+  });
+
+  it("acepta una marca de un solo carácter", () => {
+    expect(parseInline("*a*")).toEqual([{ type: "bold", children: [{ type: "text", value: "a" }] }]);
+  });
+});
+
+describe("expresión del formato", () => {
+  it("no usa lookbehind, que Safari anterior a 16.4 no soporta", () => {
+    expect(source).not.toMatch(/\(\?<[!=]/);
   });
 });
 
@@ -106,6 +150,11 @@ describe("applyFormat", () => {
 
   it("agrega el prefijo a todas las líneas seleccionadas", () => {
     expect(applyFormat("list", "uno\ndos\ntres", 0, 7).value).toBe("- uno\n- dos\ntres");
+  });
+
+  it("no agrega un ítem vacío si la selección termina en un salto de línea", () => {
+    expect(applyFormat("list", "uno\ndos\n", 0, 8).value).toBe("- uno\n- dos\n");
+    expect(applyFormat("list", "uno\ndos\ntres", 0, 8).value).toBe("- uno\n- dos\ntres");
   });
 
   it("quita el prefijo si todas las líneas ya son ítems", () => {
