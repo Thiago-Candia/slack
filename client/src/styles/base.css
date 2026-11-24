@@ -256,6 +256,11 @@ textarea {
   font-size: 0.95rem;
 }
 
+.form-hint {
+  color: var(--color-ink-soft);
+  font-size: 0.95rem;
+}
+
 .notice {
   padding: 0.75rem 0.9rem;
   margin-bottom: 1rem;
@@ -297,7 +302,8 @@ textarea {
   padding: 0.35rem 0.35rem 0.35rem 0.85rem;
   border: 1px dashed var(--color-muted);
   border-radius: var(--radius-md);
-  background: var(--color-surface-muted);
+  /* Fondo claro: "Copiar" y "Copiado" necesitan 4,5:1 (sobre --color-surface-muted quedaban en 4,2:1). */
+  background: var(--color-surface);
 }
 
 .invite-link:focus-within {
@@ -308,7 +314,7 @@ textarea {
 .invite-link__input {
   flex: 1;
   min-width: 0;
-  min-height: 36px;
+  min-height: var(--touch-target);
   border: 0;
   background: transparent;
   text-overflow: ellipsis;
@@ -319,7 +325,7 @@ textarea {
 }
 
 .invite-link__copy {
-  min-height: 36px;
+  min-height: var(--touch-target);
   padding: 0.35rem 0.85rem;
   border: 0;
   border-radius: var(--radius-sm);
@@ -331,9 +337,11 @@ textarea {
 
 .invite-link__copy:hover {
   background: var(--color-accent-soft);
+  color: var(--color-accent-hover);
 }
 
-.invite-link__copy--done {
+.invite-link__copy--done,
+.invite-link__copy--done:hover {
   color: var(--color-success);
 }
 
