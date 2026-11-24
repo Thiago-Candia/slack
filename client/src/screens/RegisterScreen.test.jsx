@@ -86,7 +86,7 @@ describe("RegisterScreen", () => {
     expect(options.headers.Authorization).toBe("Bearer nuevo-token");
   });
 
-  it("entra igual si falla la subida de la imagen", async () => {
+  it("avisa si falla la subida de la imagen y deja entrar igual", async () => {
     mockApi({ profileFails: true });
     const user = userEvent.setup();
     renderRegister();
@@ -94,6 +94,9 @@ describe("RegisterScreen", () => {
     await fillForm(user);
     await user.upload(screen.getByLabelText("Imagen de perfil (opcional)"), new File(["x"], "foto.png", { type: "image/png" }));
     await user.click(screen.getByRole("button", { name: "Crear cuenta" }));
+
+    expect(await screen.findByRole("alert")).toHaveTextContent("No pudimos guardar tu foto de perfil");
+    await user.click(screen.getByRole("button", { name: "Continuar" }));
 
     expect(await screen.findByRole("heading", { name: /tus espacios de trabajo/i })).toBeInTheDocument();
   });
