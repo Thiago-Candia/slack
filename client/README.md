@@ -255,4 +255,4 @@ Comportamientos actuales que conviene conocer. Están confirmados en el código 
 - **Sin actualización automática**: los mensajes de otras personas aparecen al volver a abrir la conversación o al recargar.
 - **Historial completo**: cada conversación carga todos sus mensajes, sin paginar.
 - **Acciones sin interfaz**: la API permite editar o borrar workspaces y canales, gestionar miembros por email y borrar mensajes, pero la interfaz todavía no lo ofrece.
-- **Avatar al registrarse**: el registro pide nombre, email y contraseña. La foto se sube después, desde el perfil.
+- **Avatar al registrarse**: la API de registro no recibe la foto. Si se elige una, se sube con `PATCH /profile` apenas se crea la cuenta; si esa subida falla, la cuenta queda creada y la pantalla avisa que la foto se puede subir después desde el perfil.
