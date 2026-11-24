@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link, Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
-import Avatar from "../components/Avatar";
 import Brand from "../components/Brand";
 import { ErrorState, LoadingState } from "../components/StatusView";
 import UserButton from "../components/UserButton";
 import CreateChannelModal from "../components/workspace/CreateChannelModal";
 import InviteModal from "../components/workspace/InviteModal";
+import WorkspaceRail from "../components/workspace/WorkspaceRail";
 import WorkspaceSidebar from "../components/workspace/WorkspaceSidebar";
 import { useWorkspaces } from "../context/WorkspaceContext";
 import { useResource } from "../hooks/useResource";
@@ -23,11 +23,16 @@ const WorkspaceScreen = () => {
   const channels = useResource(() => channelService.getByWorkspace(workspaceId), workspaceId);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [openModal, setOpenModal] = useState(null);
+  const [query, setQuery] = useState("");
   const { setData: setChannels } = channels;
 
   useEffect(() => {
     setIsSidebarOpen(false);
   }, [location.pathname]);
+
+  useEffect(() => {
+    setQuery("");
+  }, [workspaceId]);
 
   const handleChannelCreated = useCallback(
     (channel) => {
@@ -70,45 +75,60 @@ const WorkspaceScreen = () => {
 
   return (
     <div className="workspace">
-      <header className="workspace__topbar">
-        <button
-          type="button"
-          className="icon-button workspace__menu"
-          aria-controls={SIDEBAR_ID}
-          aria-expanded={isSidebarOpen}
-          aria-label={isSidebarOpen ? "Cerrar menú" : "Abrir menú"}
-          onClick={() => setIsSidebarOpen((open) => !open)}
-        >
-          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
-            <path fill="currentColor" d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z" />
-          </svg>
-        </button>
-        <Brand />
-        <Link to={`/workspace/${workspace.id}`} className="workspace__name">
-          <Avatar name={workspace.name} src={workspace.image_url} size="sm" shape="square" />
-          <span>{workspace.name}</span>
-        </Link>
-        <div className="workspace__topbar-actions">
-          <Link to="/home" className="button button--ghost button--small workspace__home-link">
-            Mis espacios
-          </Link>
-          <UserButton />
-        </div>
-      </header>
+      <WorkspaceRail workspaces={workspaces} user={user} />
+      <WorkspaceSidebar
+        id={SIDEBAR_ID}
+        workspace={workspace}
+        channels={channels}
+        currentUser={user}
+        isOpen={isSidebarOpen}
+        query={query}
+        onCreateChannel={() => setOpenModal("channel")}
+        onInvite={() => setOpenModal("invite")}
+      />
+      {isSidebarOpen && <div className="workspace__scrim" aria-hidden="true" onClick={() => setIsSidebarOpen(false)} />}
 
-      <div className="workspace__body">
-        <WorkspaceSidebar
-          id={SIDEBAR_ID}
-          workspace={workspace}
-          channels={channels}
-          currentUser={user}
-          isOpen={isSidebarOpen}
-          onCreateChannel={() => setOpenModal("channel")}
-          onInvite={() => setOpenModal("invite")}
-        />
-        {isSidebarOpen && (
-          <div className="workspace__scrim" aria-hidden="true" onClick={() => setIsSidebarOpen(false)} />
-        )}
+      <div className="workspace__content">
+        <header className="workspace__topbar">
+          <button
+            type="button"
+            className="icon-button workspace__menu"
+            aria-controls={SIDEBAR_ID}
+            aria-expanded={isSidebarOpen}
+            aria-label={isSidebarOpen ? "Cerrar menú" : "Abrir menú"}
+            onClick={() => setIsSidebarOpen((open) => !open)}
+          >
+            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
+              <path fill="currentColor" d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z" />
+            </svg>
+          </button>
+          <div className="workspace__mobile-only">
+            <Brand />
+          </div>
+          <div className="search">
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false">
+              <path
+                fill="currentColor"
+                d="M10 4a6 6 0 1 0 3.5 10.9l5 5 1.4-1.4-5-5A6 6 0 0 0 10 4m0 2a4 4 0 1 1 0 8 4 4 0 0 1 0-8"
+              />
+            </svg>
+            <input
+              type="search"
+              className="search__input"
+              aria-label={`Buscar en ${workspace.name}`}
+              placeholder={`Buscar en ${workspace.name}`}
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === "Escape") setQuery("");
+              }}
+            />
+          </div>
+          <div className="workspace__mobile-only">
+            <UserButton />
+          </div>
+        </header>
+
         <main className="workspace__main">
           <Outlet context={{ workspace, channels, user, openCreateChannel: () => setOpenModal("channel") }} />
         </main>
