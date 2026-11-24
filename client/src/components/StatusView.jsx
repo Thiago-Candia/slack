@@ -1,9 +1,13 @@
 import { errorMessage } from "../utils/errors";
 
-export const LoadingState = ({ children = "Cargando..." }) => (
+export const LoadingState = ({ children = "Cargando...", lines = 3 }) => (
   <div className="state state--loading" role="status">
-    <span className="spinner" aria-hidden="true" />
-    <span>{children}</span>
+    <span className="visually-hidden">{children}</span>
+    <span className="skeleton" aria-hidden="true">
+      {Array.from({ length: lines }, (_, index) => (
+        <span key={index} className="skeleton__line" />
+      ))}
+    </span>
   </div>
 );
 
