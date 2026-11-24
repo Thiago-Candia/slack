@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useWorkspaces } from "../context/WorkspaceContext";
@@ -23,6 +23,15 @@ const ProfileModal = ({ onClose }) => {
   const [fieldErrors, setFieldErrors] = useState({});
   const [saved, setSaved] = useState(false);
   const { submit, pending, error } = useSubmit(profileService.update);
+  const editButtonRef = useRef(null);
+  const wasEditing = useRef(false);
+
+  // Al volver de la edición, el foco regresa a "Editar". No se enfoca al abrir el modal:
+  // Modal guarda el elemento enfocado en ese momento para devolverle el foco al cerrar.
+  useEffect(() => {
+    if (wasEditing.current && !isEditing) editButtonRef.current?.focus();
+    wasEditing.current = isEditing;
+  }, [isEditing]);
 
   const handleSelectAvatar = (file) => {
     const avatarError = validateImage(file);
@@ -118,7 +127,12 @@ const ProfileModal = ({ onClose }) => {
         </div>
         <div className="profile__head">
           <h3 className="profile__name">{user?.name}</h3>
-          <button type="button" className="button button--ghost button--small profile__edit" onClick={handleEdit} autoFocus>
+          <button
+            ref={editButtonRef}
+            type="button"
+            className="button button--ghost button--small profile__edit"
+            onClick={handleEdit}
+          >
             Editar
           </button>
         </div>

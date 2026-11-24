@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -46,6 +47,38 @@ describe("ProfileModal", () => {
     expect(screen.getByRole("heading", { name: "Información de contacto" })).toBeInTheDocument();
     expect(screen.getByText("ana@example.com")).toBeInTheDocument();
     expect(screen.getByText(/02:32.*hora local/)).toBeInTheDocument();
+  });
+
+  it("devuelve el foco al botón que abrió el perfil al cerrarlo", async () => {
+    const user = userEvent.setup();
+    const Opener = () => {
+      const [open, setOpen] = useState(false);
+
+      return (
+        <MemoryRouter>
+          <button type="button" onClick={() => setOpen(true)}>
+            Abrir perfil
+          </button>
+          {open && <ProfileModal onClose={() => setOpen(false)} />}
+        </MemoryRouter>
+      );
+    };
+    render(<Opener />);
+
+    await user.click(screen.getByRole("button", { name: "Abrir perfil" }));
+    await user.keyboard("{Escape}");
+
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Abrir perfil" })).toHaveFocus();
+  });
+
+  it("devuelve el foco a Editar al cancelar la edición", async () => {
+    const { user } = renderModal();
+
+    await user.click(screen.getByRole("button", { name: "Editar" }));
+    await user.click(screen.getByRole("button", { name: "Cancelar" }));
+
+    expect(screen.getByRole("button", { name: "Editar" })).toHaveFocus();
   });
 
   it("abre el formulario con el nombre actual al pulsar Editar y deja el foco en el nombre", async () => {
