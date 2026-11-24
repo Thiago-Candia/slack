@@ -45,7 +45,7 @@ const RewritePasswordScreen = () => {
 
   if (!resetToken) {
     return (
-      <AuthLayout eyebrow="Recupera tu cuenta" title="Enlace incompleto" footer={footer}>
+      <AuthLayout eyebrow="Recuperá tu cuenta" title="Enlace incompleto" footer={footer}>
         <div className="notice notice--error" role="alert">
           <p>El enlace no tiene el código de recuperación. Pedí uno nuevo.</p>
         </div>
@@ -58,7 +58,7 @@ const RewritePasswordScreen = () => {
 
   if (done) {
     return (
-      <AuthLayout eyebrow="Recupera tu cuenta" title="Contraseña actualizada">
+      <AuthLayout eyebrow="Recuperá tu cuenta" title="Contraseña actualizada">
         <div className="notice notice--success" role="status">
           <p>Ya podés iniciar sesión con tu contraseña nueva.</p>
         </div>
@@ -70,7 +70,7 @@ const RewritePasswordScreen = () => {
   }
 
   return (
-    <AuthLayout eyebrow="Recupera tu cuenta" title="Elegí una contraseña nueva" footer={footer}>
+    <AuthLayout eyebrow="Recuperá tu cuenta" title="Elegí una contraseña nueva" footer={footer}>
       <form className="form" onSubmit={handleSubmit} noValidate>
         <TextField
           label="Contraseña nueva"

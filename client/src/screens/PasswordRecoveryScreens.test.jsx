@@ -18,14 +18,14 @@ describe("pantallas de recuperación de contraseña", () => {
   it("el pedido del enlace muestra el rótulo de sección", () => {
     renderAt("/reset-password");
 
-    expect(screen.getByText("Recupera tu cuenta")).toBeInTheDocument();
+    expect(screen.getByText("Recuperá tu cuenta")).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Restablecer la contraseña" })).toBeInTheDocument();
   });
 
   it("la nueva contraseña muestra el rótulo y la fortaleza mientras se escribe", async () => {
     renderAt("/rewrite-password?reset_token=abc");
 
-    expect(screen.getByText("Recupera tu cuenta")).toBeInTheDocument();
+    expect(screen.getByText("Recuperá tu cuenta")).toBeInTheDocument();
 
     await userEvent.setup().type(screen.getByLabelText("Contraseña nueva"), "Abcdefgh1!");
 
@@ -35,7 +35,7 @@ describe("pantallas de recuperación de contraseña", () => {
   it("el enlace sin código también muestra el rótulo", () => {
     renderAt("/rewrite-password");
 
-    expect(screen.getByText("Recupera tu cuenta")).toBeInTheDocument();
+    expect(screen.getByText("Recuperá tu cuenta")).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Enlace incompleto" })).toBeInTheDocument();
   });
 });
