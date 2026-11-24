@@ -39,7 +39,7 @@ const CreateChannelModal = ({ workspaceId, onCreated, onClose }) => {
           required
         />
         <FormError error={error} />
-        <div className="form__actions">
+        <div className="form__actions form__actions--split">
           <button type="button" className="button button--ghost" onClick={onClose}>
             Cancelar
           </button>
