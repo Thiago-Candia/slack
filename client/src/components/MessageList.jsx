@@ -2,6 +2,7 @@ import { Fragment, useEffect, useRef } from "react";
 import { useWorkspaces } from "../context/WorkspaceContext";
 import { dayKey, dayLabel, formatMessageTime } from "../utils/format";
 import Avatar from "./Avatar";
+import FormattedMessage from "./FormattedMessage";
 import { EmptyState, ErrorState, LoadingState } from "./StatusView";
 
 const GROUP_WINDOW_MS = 5 * 60 * 1000;
@@ -93,7 +94,9 @@ const MessageList = ({ status, messages, error, errorMessage, onRetry }) => {
                       </time>
                     </p>
                   )}
-                  <p className="message__body">{message.body}</p>
+                  <div className="message__body">
+                    <FormattedMessage text={message.body} />
+                  </div>
                 </div>
               </li>
             </Fragment>
