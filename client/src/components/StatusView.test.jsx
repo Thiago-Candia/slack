@@ -16,6 +16,19 @@ describe("LoadingState", () => {
     expect(container.querySelectorAll(".skeleton__line")).toHaveLength(3);
   });
 
+  it("deja el texto solo para lectores de pantalla por defecto", () => {
+    render(<LoadingState>Cargando canales...</LoadingState>);
+
+    expect(screen.getByText("Cargando canales...")).toHaveClass("visually-hidden");
+  });
+
+  it("muestra el texto con showLabel", () => {
+    render(<LoadingState showLabel>Validando la invitación...</LoadingState>);
+
+    expect(screen.getByText("Validando la invitación...")).not.toHaveClass("visually-hidden");
+    expect(screen.getByRole("status")).toHaveTextContent("Validando la invitación...");
+  });
+
   it("permite elegir la cantidad de barras", () => {
     const { container } = render(<LoadingState lines={5} />);
 

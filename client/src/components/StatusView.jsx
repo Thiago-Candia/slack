@@ -1,8 +1,10 @@
 import { errorMessage } from "../utils/errors";
 
-export const LoadingState = ({ children = "Cargando...", lines = 3 }) => (
+// showLabel muestra el texto debajo de las barras: en una pantalla completa de carga
+// es la única pista de qué se está esperando. En listas y paneles alcanza con las barras.
+export const LoadingState = ({ children = "Cargando...", lines = 3, showLabel = false }) => (
   <div className="state state--loading" role="status">
-    <span className="visually-hidden">{children}</span>
+    <span className={showLabel ? "state__label" : "visually-hidden"}>{children}</span>
     <span className="skeleton" aria-hidden="true">
       {Array.from({ length: lines }, (_, index) => (
         <span key={index} className="skeleton__line" />

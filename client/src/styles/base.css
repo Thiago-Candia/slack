@@ -352,6 +352,13 @@ textarea {
   align-items: stretch;
 }
 
+/* El texto va después de las barras aunque en el DOM esté antes, para que se lea primero. */
+.state--loading .state__label {
+  order: 1;
+  color: var(--color-ink-soft);
+  font-size: 0.95rem;
+}
+
 .state--error {
   color: var(--color-danger);
 }
