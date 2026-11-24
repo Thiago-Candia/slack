@@ -68,7 +68,10 @@ describe("InviteModal", () => {
     vi.spyOn(navigator.clipboard, "writeText").mockRejectedValue(new Error("denegado"));
     await user.click(copyButton);
 
-    expect(await screen.findByText(/no se pudo copiar automáticamente/i)).toBeInTheDocument();
+    const notice = await screen.findByText(/no se pudo copiar automáticamente/i);
+    expect(notice).toBeInTheDocument();
+    // Es una indicación, no un éxito: no usa el estilo verde.
+    expect(notice).not.toHaveClass("form-success");
     expect(screen.getByRole("button", { name: "Copiar" })).toBeInTheDocument();
   });
 });

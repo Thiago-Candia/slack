@@ -32,11 +32,11 @@ const InviteModal = ({ workspace, onClose }) => {
     try {
       await navigator.clipboard.writeText(link);
       setCopied(true);
-      setCopyStatus("Link copiado al portapapeles.");
+      setCopyStatus({ tone: "success", text: "Link copiado al portapapeles." });
     } catch {
       linkRef.current?.select();
       setCopied(false);
-      setCopyStatus("No se pudo copiar automáticamente: el link quedó seleccionado para que lo copies.");
+      setCopyStatus({ tone: "hint", text: "No se pudo copiar automáticamente: el link quedó seleccionado para que lo copies." });
     }
   };
 
@@ -71,8 +71,8 @@ const InviteModal = ({ workspace, onClose }) => {
               </div>
             </div>
             {copyStatus && (
-              <p className="form-success" role="status">
-                {copyStatus}
+              <p className={copyStatus.tone === "success" ? "form-success" : "form-hint"} role="status">
+                {copyStatus.text}
               </p>
             )}
           </>
