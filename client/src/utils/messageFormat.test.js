@@ -152,6 +152,11 @@ describe("applyFormat", () => {
     expect(applyFormat("list", "uno\ndos\ntres", 0, 7).value).toBe("- uno\n- dos\ntres");
   });
 
+  it("no agrega un ítem vacío si la selección termina en un salto de línea", () => {
+    expect(applyFormat("list", "uno\ndos\n", 0, 8).value).toBe("- uno\n- dos\n");
+    expect(applyFormat("list", "uno\ndos\ntres", 0, 8).value).toBe("- uno\n- dos\ntres");
+  });
+
   it("quita el prefijo si todas las líneas ya son ítems", () => {
     expect(applyFormat("list", "- uno\n- dos", 0, 11).value).toBe("uno\ndos");
   });

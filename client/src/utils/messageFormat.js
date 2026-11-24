@@ -108,7 +108,9 @@ export const applyFormat = (kind, value, start, end) => {
 
   if (kind === "list") {
     const lineStart = start === 0 ? 0 : value.lastIndexOf("\n", start - 1) + 1;
-    const nextBreak = value.indexOf("\n", end);
+    // Si la selección termina justo después de un salto de línea, la línea siguiente no está seleccionada.
+    const lastSelected = end > start && value[end - 1] === "\n" ? end - 1 : end;
+    const nextBreak = value.indexOf("\n", lastSelected);
     const lineEnd = nextBreak === -1 ? value.length : nextBreak;
     const lines = value.slice(lineStart, lineEnd).split("\n");
     const allListed = lines.every((line) => line.startsWith("- "));
