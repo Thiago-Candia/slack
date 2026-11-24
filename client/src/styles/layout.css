@@ -95,7 +95,7 @@
 }
 
 .password-strength--medium .password-strength__bar--on {
-  background: #b45309;
+  background: var(--color-warning);
 }
 
 .password-strength--strong .password-strength__bar--on {
