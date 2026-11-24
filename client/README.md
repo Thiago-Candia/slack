@@ -228,7 +228,7 @@ Cómo se muestra lo que pasa mientras se carga o cuando algo falla.
 
 | Componente | Cuándo | Detalle |
 |---|---|---|
-| `LoadingState` | Cargando | Spinner + texto, con `role="status"`. |
+| `LoadingState` | Cargando | Barras de carga + texto con `role="status"`. El texto es solo para lectores de pantalla, salvo con `showLabel` (pantallas completas de carga). |
 | `EmptyState` | No hay datos | Título + sugerencia de qué hacer. |
 | `ErrorState` | Falló la carga | Mensaje + botón **Reintentar**, con `role="alert"`. |
 
