@@ -1,5 +1,5 @@
 import { assetUrl } from "../utils/assets";
-import { initials } from "../utils/format";
+import { avatarColor, initials } from "../utils/format";
 
 const Avatar = ({ name, src, size = "md", shape = "round", decorative = true }) => {
   const url = src?.startsWith("blob:") ? src : assetUrl(src);
@@ -9,8 +9,16 @@ const Avatar = ({ name, src, size = "md", shape = "round", decorative = true }) 
     return <img className={className} src={url} alt={decorative ? "" : name} />;
   }
 
+  const { background, color } = avatarColor(name);
+
   return (
-    <span className={`${className} avatar--initials`} aria-hidden={decorative || undefined} role={decorative ? undefined : "img"} aria-label={decorative ? undefined : name}>
+    <span
+      className={`${className} avatar--initials`}
+      style={{ backgroundColor: background, color }}
+      aria-hidden={decorative || undefined}
+      role={decorative ? undefined : "img"}
+      aria-label={decorative ? undefined : name}
+    >
       {initials(name)}
     </span>
   );

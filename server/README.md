@@ -13,7 +13,8 @@ El frontend se desarrolla por separado en el Trabajo Práctico N.º 2 y consume 
 - Autenticación: `has_secure_password` (bcrypt) + JWT (gema `jwt`) para la API, sesión de
   cookie de Rails para el back-office
 - Active Storage (avatares de usuario, imagen de workspace)
-- Action Mailer (recuperación de contraseña)
+- Action Mailer + [Resend](https://resend.com) por SMTP (recuperación de contraseña)
+- `letter_opener_web` para ver los emails en desarrollo
 
 ## Requisitos previos
 
@@ -55,6 +56,39 @@ La app queda disponible en `http://localhost:3000`. El back-office está en
 | Variable | Uso | Default si no se define |
 |---|---|---|
 | `FRONTEND_URL` | Origen permitido por CORS y base de los links que se envían por email (ej. reset de contraseña) | `http://localhost:5173` |
+| `RESEND_API_KEY` | API key de Resend. Si está definida, los emails se envían por `smtp.resend.com` (desarrollo y producción) | Sin envío real: en desarrollo se ven en `/letter_opener` |
+| `MAILER_FROM` | Remitente de los emails | `onboarding@resend.dev` con Resend, `no-reply@slack-clone.test` sin SMTP |
+| `SMTP_ADDRESS`, `SMTP_PORT`, `SMTP_USERNAME`, `SMTP_PASSWORD` | Otro proveedor SMTP en lugar de Resend; tienen prioridad | Puerto `587` |
+
+Ninguna clave se sube al repositorio: se definen como variables de entorno.
+
+## Emails (Resend)
+
+La recuperación de contraseña envía un email con un link a `FRONTEND_URL/rewrite-password?reset_token=…`, que vence a las 2 horas. El envío lo hace un job (`deliver_later`).
+
+**En desarrollo, sin API key**: los emails no salen de la máquina. Se guardan y se ven en `http://localhost:3000/letter_opener`, con el link listo para abrir.
+
+**Con Resend** (plan gratuito: 3.000 emails por mes, 100 por día):
+
+1. Crear una cuenta en [resend.com](https://resend.com) y una API key en *API Keys*.
+2. Levantar el server con la clave como variable de entorno. En WSL/Ubuntu:
+
+   ```bash
+   export RESEND_API_KEY=re_xxxxxxxx
+   bundle exec rails server
+   ```
+
+3. En el log aparece `Delivered mail …` y el envío se ve en Resend → *Emails*.
+
+**Límite sin dominio propio**: el remitente es `onboarding@resend.dev` y Resend **solo entrega al email de la cuenta de Resend**. Para enviar a cualquier usuario, verificar un dominio en Resend → *Domains* y definir `MAILER_FROM`, por ejemplo `Slack Clone <no-reply@tudominio.com>`.
+
+| Error en el log | Causa |
+|---|---|
+| `535 Authentication` / `Net::SMTPAuthenticationError` | API key incorrecta o revocada |
+| `You can only send testing emails to your own email address` | Destinatario distinto del email de la cuenta de Resend (sin dominio verificado) |
+| No aparece `Delivered mail` | El email pedido no está registrado: la API responde igual, sin enviar nada |
+
+Si una API key se filtra (commit, chat, issue), borrarla en Resend y crear una nueva.
 
 ## Credenciales y acceso al back-office
 
