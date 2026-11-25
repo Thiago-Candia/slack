@@ -71,9 +71,9 @@ El envío sigue siendo una petición HTTP normal. El WebSocket solo se usa para 
 |---|---|---|
 | `development` | `async` | Funciona dentro del mismo proceso, sin servicios extra. |
 | `test` | `test` | Permite verificar los broadcasts en los tests. |
-| `production` | `solid_cable` | Usa la base PostgreSQL (base `cable`). No requiere Redis. |
+| `production` | `solid_cable` | Usa la misma base PostgreSQL de la app (tabla `solid_cable_messages`). No requiere Redis. |
 
-En producción hay que preparar también la base `cable` (`bin/rails db:prepare`).
+La tabla la crea una migración normal, así que `bin/rails db:prepare` (que corre al arrancar el contenedor) alcanza.
 
 ### Por qué WebSocket y Action Cable
 
