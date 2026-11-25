@@ -59,6 +59,10 @@ Se sirve en `http://localhost:3000`.
 
 `bin/rails db:seed` crea las cuentas `admin@example.com` y `ana@example.com` (contraseña `password123`) dentro del workspace "Cátedra Programación IV".
 
+### Emails en desarrollo
+
+En desarrollo los emails no se envían: se guardan y se ven en `http://localhost:3000/letter_opener` (por ejemplo, el de recuperación de contraseña, con el link listo para abrir). El enlace vence a las 2 horas y cada pedido nuevo invalida el anterior.
+
 ## Variables de entorno
 
 Nunca se suben al repositorio. Solo se versionan los archivos `.env.example`.
@@ -66,7 +70,12 @@ Nunca se suben al repositorio. Solo se versionan los archivos `.env.example`.
 | Variable | Dónde | Descripción |
 |---|---|---|
 | `VITE_URL_API` | `client/.env` | URL base de la API. Es pública en el bundle del navegador: no debe contener secretos. |
-| `FRONTEND_URL` | Entorno del servidor | Origen del frontend permitido por CORS, además de `http://localhost:5173`. |
+| `FRONTEND_URL` | Entorno del servidor | Origen del frontend permitido por CORS, además de `http://localhost:5173`. También es la base del link del email de recuperación de contraseña. |
+| `SMTP_ADDRESS` | Entorno del servidor (producción) | Servidor SMTP. Si está definido, los emails se envían por SMTP. |
+| `SMTP_PORT` | Entorno del servidor (producción) | Puerto SMTP. Opcional, por defecto `587`. |
+| `SMTP_USERNAME`, `SMTP_PASSWORD` | Entorno del servidor (producción) | Credenciales SMTP. |
+| `MAILER_FROM` | Entorno del servidor | Remitente de los emails. Opcional, por defecto `no-reply@slack-clone.test`. |
+| `APP_HOST` | Entorno del servidor (producción) | Dominio del backend para las URLs generadas en los emails. Opcional. |
 | `SERVER_DATABASE_PASSWORD` | Entorno del servidor (producción) | Contraseña de PostgreSQL. |
 | `RAILS_MASTER_KEY` | Entorno del servidor (producción) | Clave para descifrar `config/credentials.yml.enc`. |
 | `RAILS_MAX_THREADS` | Entorno del servidor | Hilos de Puma y conexiones a la base de datos. Opcional. |
