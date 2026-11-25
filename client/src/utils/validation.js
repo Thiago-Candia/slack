@@ -22,6 +22,24 @@ export const validateNewPassword = (password) => {
 export const validatePasswordConfirmation = (password, confirmation) =>
   password === confirmation ? null : "Las contraseñas no coinciden.";
 
+// Ayuda visual: la regla de validación sigue siendo solo la longitud mínima.
+export const getPasswordStrength = (password) => {
+  if (!password) return null;
+  if (password.length < MIN_PASSWORD_LENGTH) return { level: "weak", label: "Débil", score: 1 };
+
+  const points = [
+    password.length >= 12,
+    /[a-z]/.test(password) && /[A-Z]/.test(password),
+    /\d/.test(password),
+    /[^A-Za-z0-9]/.test(password)
+  ].filter(Boolean).length;
+
+  if (points === 0) return { level: "weak", label: "Débil", score: 1 };
+  if (points <= 2) return { level: "medium", label: "Media", score: 2 };
+
+  return { level: "strong", label: "Fuerte", score: 3 };
+};
+
 export const validateImage = (file) => {
   if (!file) return null;
   if (!file.type.startsWith("image/")) return "El archivo tiene que ser una imagen.";

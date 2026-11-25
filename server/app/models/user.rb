@@ -1,4 +1,6 @@
 class User < ApplicationRecord
+  RESET_PASSWORD_TTL = 2.hours
+
   has_secure_password
   has_one_attached :avatar
 

@@ -25,3 +25,16 @@ local:
 #   service: Mirror
 #   primary: local
 #   mirrors: [ amazon, google, microsoft ]
+
+# Any S3-compatible bucket: AWS S3, Cloudflare R2, Supabase Storage, Backblaze B2...
+# Used in production when STORAGE_BUCKET is set (see config/environments/production.rb).
+s3:
+  service: S3
+  access_key_id: <%= ENV["STORAGE_ACCESS_KEY_ID"] %>
+  secret_access_key: <%= ENV["STORAGE_SECRET_ACCESS_KEY"] %>
+  region: <%= ENV.fetch("STORAGE_REGION", "auto") %>
+  bucket: <%= ENV["STORAGE_BUCKET"] %>
+<% if ENV["STORAGE_ENDPOINT"].present? %>
+  endpoint: <%= ENV["STORAGE_ENDPOINT"] %>
+<% end %>
+  force_path_style: true

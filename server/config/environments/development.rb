@@ -1,4 +1,5 @@
 require "active_support/core_ext/integer/time"
+require_relative "../smtp_settings"
 
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
@@ -29,8 +30,15 @@ Rails.application.configure do
   # Store uploaded files on the local file system (see config/storage.yml for options).
   config.active_storage.service = :local
 
-  # Don't care if the mailer can't send.
-  config.action_mailer.delivery_method = :file
+  # Sent emails are stored locally and shown at http://localhost:3000/letter_opener,
+  # unless RESEND_API_KEY (or SMTP_ADDRESS) is set: then they are really sent.
+  if (smtp_settings = SmtpSettings.call)
+    config.action_mailer.delivery_method = :smtp
+    config.action_mailer.smtp_settings = smtp_settings
+  else
+    config.action_mailer.delivery_method = :letter_opener_web
+  end
+  config.action_mailer.perform_deliveries = true
   config.action_mailer.raise_delivery_errors = true
 
   # Make template changes take effect immediately.

@@ -1,12 +1,13 @@
 import Brand from "./Brand";
 
-const AuthLayout = ({ title, subtitle, children, footer }) => (
+const AuthLayout = ({ eyebrow, title, subtitle, children, footer }) => (
   <div className="auth-page">
     <header className="auth-page__header">
       <Brand to="/login" />
     </header>
     <main className="auth-page__main">
       <section className="auth-card" aria-labelledby="auth-title">
+        {eyebrow && <p className="auth-card__eyebrow">{eyebrow}</p>}
         <h1 id="auth-title" className="auth-card__title">
           {title}
         </h1>

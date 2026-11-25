@@ -10,7 +10,9 @@ module ChannelMessages
       message = @channel.messages.new(body: params[:body], user: current_user)
 
       if message.save
-        render json: MessageSerializer.new(message).as_json, status: :created
+        payload = MessageSerializer.new(message).as_json
+        ConversationChannel.broadcast_to(@channel, { type: "message.created", message: payload })
+        render json: payload, status: :created
       else
         render json: { errors: message.errors.full_messages }, status: :unprocessable_entity
       end

@@ -1,0 +1,52 @@
+# Render Blueprint: API (Rails, Docker) + PostgreSQL.
+# The client (client/) is deployed on Vercel.
+databases:
+  - name: slack-db
+    plan: free
+    databaseName: slack_production
+    user: slack
+
+services:
+  - type: web
+    name: slack-api
+    runtime: docker
+    plan: free
+    dockerfilePath: ./server/Dockerfile
+    dockerContext: ./server
+    healthCheckPath: /up
+    buildFilter:
+      paths:
+        - server/**
+        - render.yaml
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: slack-db
+          property: connectionString
+      - key: SECRET_KEY_BASE
+        generateValue: true
+      # Runs Solid Queue (emails and other jobs) inside Puma: no extra worker needed.
+      - key: SOLID_QUEUE_IN_PUMA
+        value: "true"
+      - key: RAILS_LOG_LEVEL
+        value: info
+      # Vercel URL of the client, e.g. https://slack-clone.vercel.app (CORS and email links).
+      - key: FRONTEND_URL
+        sync: false
+      # Resend API key for emails.
+      - key: RESEND_API_KEY
+        sync: false
+      # Optional: sender with a domain verified in Resend, e.g. Slack Clone <no-reply@yourdomain.com>
+      - key: MAILER_FROM
+        sync: false
+      # Optional: S3-compatible bucket for avatars and workspace images.
+      - key: STORAGE_BUCKET
+        sync: false
+      - key: STORAGE_ENDPOINT
+        sync: false
+      - key: STORAGE_REGION
+        sync: false
+      - key: STORAGE_ACCESS_KEY_ID
+        sync: false
+      - key: STORAGE_SECRET_ACCESS_KEY
+        sync: false
