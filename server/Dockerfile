@@ -1,14 +1,15 @@
 # syntax=docker/dockerfile:1
 # check=error=true
 
-# This Dockerfile is designed for production, not development. Use with Kamal or build'n'run by hand:
+# This Dockerfile is designed for production, not development. Render builds it from render.yaml.
+# To build and run it by hand:
 # docker build -t server .
-# docker run -d -p 80:80 -e RAILS_MASTER_KEY=<value from config/master.key> --name server server
+# docker run -d -p 3000:3000 -e DATABASE_URL=... -e SECRET_KEY_BASE=... --name server server
 
 # For a containerized dev environment, see Dev Containers: https://guides.rubyonrails.org/getting_started_with_devcontainer.html
 
 # Make sure RUBY_VERSION matches the Ruby version in .ruby-version
-ARG RUBY_VERSION=3.3.0
+ARG RUBY_VERSION=3.3.10
 FROM docker.io/library/ruby:$RUBY_VERSION-slim AS base
 
 # Rails app lives here
@@ -47,6 +48,9 @@ RUN bundle install && \
 # Copy application code
 COPY . .
 
+# Scripts may lose their executable bit or get CRLF endings when the repo is edited on Windows.
+RUN sed -i 's/\r$//' bin/* && chmod +x bin/*
+
 # Precompile bootsnap code for faster boot times.
 # -j 1 disable parallel compilation to avoid a QEMU bug: https://github.com/rails/bootsnap/issues/495
 RUN bundle exec bootsnap precompile -j 1 app/ lib/
@@ -69,6 +73,6 @@ COPY --chown=rails:rails --from=build /rails /rails
 # Entrypoint prepares the database.
 ENTRYPOINT ["/rails/bin/docker-entrypoint"]
 
-# Start server via Thruster by default, this can be overwritten at runtime
-EXPOSE 80
-CMD ["./bin/thrust", "./bin/rails", "server"]
+# Start Puma directly. It listens on $PORT (Render sets it), or 3000 by default.
+EXPOSE 3000
+CMD ["./bin/rails", "server"]
