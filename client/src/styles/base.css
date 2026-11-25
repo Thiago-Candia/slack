@@ -232,6 +232,10 @@ textarea {
   gap: var(--space-3);
 }
 
+.form__actions--split {
+  justify-content: space-between;
+}
+
 .field {
   display: flex;
   flex-direction: column;
@@ -295,6 +299,11 @@ textarea {
   font-size: 0.95rem;
 }
 
+.form-hint {
+  color: var(--color-ink-soft);
+  font-size: 0.95rem;
+}
+
 .notice {
   padding: 0.75rem 0.9rem;
   margin-bottom: 1rem;
@@ -329,13 +338,54 @@ textarea {
   flex-basis: 100%;
 }
 
-.copy-row {
+.invite-link {
   display: flex;
+  align-items: center;
   gap: 0.5rem;
+  padding: 0.35rem 0.35rem 0.35rem 0.85rem;
+  border: 1px dashed var(--color-muted);
+  border-radius: var(--radius-md);
+  /* Fondo claro: "Copiar" y "Copiado" necesitan 4,5:1 (sobre --color-surface-muted quedaban en 4,2:1). */
+  background: var(--color-surface);
 }
 
-.copy-row .field__input {
+.invite-link:focus-within {
+  border-color: var(--color-focus);
+  box-shadow: 0 0 0 3px rgb(29 78 216 / 15%);
+}
+
+.invite-link__input {
+  flex: 1;
   min-width: 0;
+  min-height: var(--touch-target);
+  border: 0;
+  background: transparent;
+  text-overflow: ellipsis;
+}
+
+.invite-link__input:focus-visible {
+  outline: none;
+}
+
+.invite-link__copy {
+  min-height: var(--touch-target);
+  padding: 0.35rem 0.85rem;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-accent);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.invite-link__copy:hover {
+  background: var(--color-accent-soft);
+  color: var(--color-accent-hover);
+}
+
+.invite-link__copy--done,
+.invite-link__copy--done:hover {
+  color: var(--color-success);
 }
 
 /* Estados: carga, vacío, error */
@@ -481,6 +531,7 @@ textarea {
   justify-content: center;
   padding: 1rem;
   background: rgb(43 43 38 / 45%);
+  animation: modal-fade 150ms ease-out;
 }
 
 .modal {
@@ -490,6 +541,7 @@ textarea {
   border-radius: var(--radius-lg);
   background: var(--color-surface);
   box-shadow: var(--shadow-md);
+  animation: modal-pop 180ms ease-out;
 }
 
 .modal:focus {
@@ -506,14 +558,101 @@ textarea {
 
 .modal__title {
   font-size: 1.25rem;
+  overflow-wrap: anywhere;
+}
+
+.modal__close {
+  flex-shrink: 0;
+  border-color: var(--color-border-strong);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+
+@keyframes modal-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes modal-pop {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .modal-backdrop,
+  .modal {
+    animation: none;
+  }
 }
 
 .modal__body {
   padding: 1rem 1.5rem 1.5rem;
 }
 
-.profile-email {
+.profile {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.profile__avatar {
+  display: flex;
+  justify-content: center;
+}
+
+.profile__avatar .avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: var(--radius-lg);
+  font-size: 2.5rem;
+}
+
+.profile__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.profile__name {
+  font-size: 1.4rem;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.profile__edit {
+  color: var(--color-accent);
+  font-weight: 700;
+}
+
+.profile__meta,
+.profile__contact {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.profile__meta {
+  color: var(--color-muted);
+}
+
+.profile__contact {
   word-break: break-all;
+}
+
+.profile__section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.profile__section-title {
+  font-size: 1rem;
 }
 
 /* Marca y botón de usuario */
