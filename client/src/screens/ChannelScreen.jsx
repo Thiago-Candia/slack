@@ -34,6 +34,7 @@ const ChannelScreen = () => {
       loadMessages={() => channelService.getMessages(channel.id)}
       sendMessage={(body) => channelService.sendMessage(channel.id, body)}
       describeError={describeChannelError}
+      subscription={{channel_id: channel.id}}
     />
   );
 };
