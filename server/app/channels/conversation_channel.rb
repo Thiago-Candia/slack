@@ -1,6 +1,6 @@
 class ConversationChannel < ApplicationCable::Channel
   def subscribed
-    channel = params[:user_id] ? direct_channel : member_channel
+    channel = params[:user_id] ? direct_channel : accessible_channel
     return reject unless channel
 
     stream_for channel
@@ -8,8 +8,9 @@ class ConversationChannel < ApplicationCable::Channel
 
   private
 
-  def member_channel
-    current_user.channels.find_by(id: params[:channel_id])
+  # La misma regla de acceso que usa la API HTTP para leer y enviar mensajes.
+  def accessible_channel
+    Channel.accessible_by(current_user).find_by(id: params[:channel_id])
   end
 
   def direct_channel
