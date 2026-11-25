@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import AuthLayout from "../components/AuthLayout";
 import FormError from "../components/FormError";
+import PasswordStrength from "../components/PasswordStrength";
 import TextField from "../components/TextField";
 import { useSubmit } from "../hooks/useSubmit";
 import { authService } from "../services";
@@ -44,7 +45,7 @@ const RewritePasswordScreen = () => {
 
   if (!resetToken) {
     return (
-      <AuthLayout title="Enlace incompleto" footer={footer}>
+      <AuthLayout eyebrow="Recuperá tu cuenta" title="Enlace incompleto" footer={footer}>
         <div className="notice notice--error" role="alert">
           <p>El enlace no tiene el código de recuperación. Pedí uno nuevo.</p>
         </div>
@@ -57,7 +58,7 @@ const RewritePasswordScreen = () => {
 
   if (done) {
     return (
-      <AuthLayout title="Contraseña actualizada">
+      <AuthLayout eyebrow="Recuperá tu cuenta" title="Contraseña actualizada">
         <div className="notice notice--success" role="status">
           <p>Ya podés iniciar sesión con tu contraseña nueva.</p>
         </div>
@@ -69,7 +70,7 @@ const RewritePasswordScreen = () => {
   }
 
   return (
-    <AuthLayout title="Elegí una contraseña nueva" footer={footer}>
+    <AuthLayout eyebrow="Recuperá tu cuenta" title="Elegí una contraseña nueva" footer={footer}>
       <form className="form" onSubmit={handleSubmit} noValidate>
         <TextField
           label="Contraseña nueva"
@@ -82,6 +83,7 @@ const RewritePasswordScreen = () => {
           error={fieldErrors.password}
           required
         />
+        <PasswordStrength password={form.password} />
         <TextField
           label="Repetir contraseña"
           type="password"

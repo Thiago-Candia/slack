@@ -63,8 +63,10 @@ const Modal = ({ title, onClose, children }) => {
           <h2 id={titleId} className="modal__title">
             {title}
           </h2>
-          <button type="button" className="icon-button" onClick={onClose} aria-label="Cerrar">
-            <span aria-hidden="true">×</span>
+          <button type="button" className="icon-button modal__close" onClick={onClose} aria-label="Cerrar">
+            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
+              <path fill="currentColor" d="m6.4 5 5.6 5.6L17.6 5 19 6.4 13.4 12l5.6 5.6-1.4 1.4-5.6-5.6L6.4 19 5 17.6l5.6-5.6L5 6.4z" />
+            </svg>
           </button>
         </header>
         <div className="modal__body">{children}</div>
