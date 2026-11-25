@@ -61,7 +61,21 @@ Se sirve en `http://localhost:3000`.
 
 ### Emails en desarrollo
 
-En desarrollo los emails no se envían: se guardan y se ven en `http://localhost:3000/letter_opener` (por ejemplo, el de recuperación de contraseña, con el link listo para abrir). El enlace vence a las 2 horas y cada pedido nuevo invalida el anterior.
+En desarrollo, por defecto, los emails no se envían: se guardan y se ven en `http://localhost:3000/letter_opener` (por ejemplo, el de recuperación de contraseña, con el link listo para abrir). El enlace vence a las 2 horas y cada pedido nuevo invalida el anterior.
+
+### Envío real con Resend
+
+1. Crear una cuenta en [resend.com](https://resend.com) (plan gratuito: 3.000 emails por mes, 100 por día) y generar una API key en *API Keys*.
+2. Definir la variable antes de levantar el server. Nunca subirla al repositorio:
+
+   ```bash
+   export RESEND_API_KEY=re_xxxxxxxx
+   bin/rails server
+   ```
+
+3. Con `RESEND_API_KEY` definida, tanto en desarrollo como en producción los emails salen por `smtp.resend.com`.
+
+**Límite sin dominio propio:** si no verificás un dominio en Resend, el remitente es `onboarding@resend.dev` y **solo se puede enviar al email con el que creaste la cuenta de Resend**. Para enviar a cualquier persona, verificá un dominio en *Domains* y definí `MAILER_FROM`, por ejemplo `Slack Clone <no-reply@tudominio.com>`.
 
 ## Variables de entorno
 
@@ -71,10 +85,9 @@ Nunca se suben al repositorio. Solo se versionan los archivos `.env.example`.
 |---|---|---|
 | `VITE_URL_API` | `client/.env` | URL base de la API. Es pública en el bundle del navegador: no debe contener secretos. |
 | `FRONTEND_URL` | Entorno del servidor | Origen del frontend permitido por CORS, además de `http://localhost:5173`. También es la base del link del email de recuperación de contraseña. |
-| `SMTP_ADDRESS` | Entorno del servidor (producción) | Servidor SMTP. Si está definido, los emails se envían por SMTP. |
-| `SMTP_PORT` | Entorno del servidor (producción) | Puerto SMTP. Opcional, por defecto `587`. |
-| `SMTP_USERNAME`, `SMTP_PASSWORD` | Entorno del servidor (producción) | Credenciales SMTP. |
-| `MAILER_FROM` | Entorno del servidor | Remitente de los emails. Opcional, por defecto `no-reply@slack-clone.test`. |
+| `RESEND_API_KEY` | Entorno del servidor | API key de Resend. Si está definida, los emails se envían por `smtp.resend.com`. |
+| `SMTP_ADDRESS`, `SMTP_PORT`, `SMTP_USERNAME`, `SMTP_PASSWORD` | Entorno del servidor | Otro proveedor SMTP. Tienen prioridad sobre Resend. Puerto por defecto `587`. |
+| `MAILER_FROM` | Entorno del servidor | Remitente. Por defecto `onboarding@resend.dev` con Resend y `no-reply@slack-clone.test` sin SMTP. |
 | `APP_HOST` | Entorno del servidor (producción) | Dominio del backend para las URLs generadas en los emails. Opcional. |
 | `SERVER_DATABASE_PASSWORD` | Entorno del servidor (producción) | Contraseña de PostgreSQL. |
 | `RAILS_MASTER_KEY` | Entorno del servidor (producción) | Clave para descifrar `config/credentials.yml.enc`. |
