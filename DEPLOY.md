@@ -12,8 +12,8 @@ Todo tiene plan gratuito. Ninguna clave se sube al repositorio: se cargan en el 
 Render y Vercel despliegan la rama por defecto del repositorio (`main`). Mergeá primero en `develop` y después `develop` en `main`:
 
 - [x] PR #9 – mensajes en tiempo real con Action Cable (`8-feat/websocket`)
-- [ ] PR #26 – restablecimiento de contraseña y Resend (`25-fix/password-reset-mail`)
-- [ ] PR #29 – base de datos única con Solid Queue, Cache y Cable (`27-fix/single-production-database`)
+- [x] PR #26 – restablecimiento de contraseña y Resend (`25-fix/password-reset-mail`)
+- [x] PR #29 – base de datos única con Solid Queue, Cache y Cable (`27-fix/single-production-database`)
 - [ ] PR #30 – esta configuración de deploy (`28-chore/render-vercel-deploy`)
 
 ## 1. Resend (emails)
