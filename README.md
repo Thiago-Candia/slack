@@ -84,6 +84,8 @@ Nunca se suben al repositorio. Solo se versionan los archivos `.env.example`.
 | `npm run test:watch` | Tests en modo observador |
 | `npm run preview` | Sirve el build localmente |
 
-## Despliegue del frontend
+## Deploy
+
+El server se despliega en Render (`render.yaml`, Docker y PostgreSQL) y el client en Vercel. La guía paso a paso y todas las variables de producción están en [DEPLOY.md](DEPLOY.md).
 
 `client/vercel.json` reescribe todas las rutas a `index.html` para el enrutado del lado del cliente. Define `VITE_URL_API` en el panel de Vercel.
