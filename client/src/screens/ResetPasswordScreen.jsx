@@ -26,6 +26,7 @@ const ResetPasswordScreen = () => {
 
   return (
     <AuthLayout
+      eyebrow="Recuperá tu cuenta"
       title="Restablecer la contraseña"
       subtitle="Te enviamos un enlace para que elijas una contraseña nueva."
       footer={

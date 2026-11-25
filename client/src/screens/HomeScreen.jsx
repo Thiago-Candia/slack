@@ -4,6 +4,27 @@ import Avatar from "../components/Avatar";
 import { EmptyState, ErrorState, LoadingState } from "../components/StatusView";
 import { useWorkspaces } from "../context/WorkspaceContext";
 
+const GETTING_STARTED = [
+  {
+    tag: "Canales",
+    title: "Creá un canal",
+    text: "Ordená las conversaciones por tema. Cada canal tiene su propio historial de mensajes.",
+    icon: "M9.4 4 8.8 7H5v2h3.4l-.8 4H4v2h3.2l-.6 3h2l.6-3h4l-.6 3h2l.6-3H19v-2h-3.4l.8-4H20V7h-3.2l.6-3h-2l-.6 3h-4l.6-3zm.8 5h4l-.8 4h-4z"
+  },
+  {
+    tag: "Invitaciones",
+    title: "Invitá a tu equipo",
+    text: "Generá un link de invitación desde la barra lateral y compartilo con quien quieras sumar.",
+    icon: "M15 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8m-9 2V11H4v3H1v2h3v3h2v-3h3v-2zm9 1c-2.7 0-8 1.3-8 4v1h16v-1c0-2.7-5.3-4-8-4"
+  },
+  {
+    tag: "Mensajes directos",
+    title: "Escribí a una persona",
+    text: "Elegí a cualquier miembro en la barra lateral para hablar 1 a 1, sin salir del espacio de trabajo.",
+    icon: "M4 4h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H8l-4 4V6a2 2 0 0 1 2-2"
+  }
+];
+
 const memberCount = (workspace) => {
   const count = workspace.members?.length ?? 0;
   return count === 1 ? "1 miembro" : `${count} miembros`;
@@ -53,7 +74,7 @@ const HomeScreen = () => {
           )}
         </section>
 
-        <section className="panel panel--row" aria-labelledby="create-title">
+        <section className="panel panel--row panel--create" aria-labelledby="create-title">
           <div className="panel__art" aria-hidden="true">
             #
           </div>
@@ -68,6 +89,26 @@ const HomeScreen = () => {
         <p className="home__hint">
           ¿No encontrás tu espacio de trabajo? Pedile a alguien del equipo un link de invitación.
         </p>
+
+        <section className="home__help" aria-labelledby="help-title">
+          <h2 id="help-title" className="home__section-title">
+            Primeros pasos
+          </h2>
+          <ul className="help-cards">
+            {GETTING_STARTED.map((card) => (
+              <li key={card.tag} className="help-card">
+                <span className="help-card__icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" width="22" height="22" focusable="false">
+                    <path fill="currentColor" d={card.icon} />
+                  </svg>
+                </span>
+                <p className="help-card__tag">{card.tag}</p>
+                <h3 className="help-card__title">{card.title}</h3>
+                <p className="help-card__text">{card.text}</p>
+              </li>
+            ))}
+          </ul>
+        </section>
       </main>
     </div>
   );

@@ -53,7 +53,7 @@ const JoinWorkspaceScreen = () => {
               <h1 id="join-title" className="panel__title">
                 Uniéndote al espacio de trabajo
               </h1>
-              <LoadingState>Validando la invitación...</LoadingState>
+              <LoadingState showLabel>Validando la invitación...</LoadingState>
             </>
           )}
         </section>
