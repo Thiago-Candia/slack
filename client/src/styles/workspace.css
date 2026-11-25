@@ -419,6 +419,7 @@
 }
 
 .message__content {
+  flex: 1;
   min-width: 0;
 }
 
@@ -459,6 +460,93 @@
 .message__list {
   padding-left: 1.25rem;
   list-style: disc;
+}
+
+/* Adjuntos de un mensaje: imágenes en línea y tarjetas de descarga para el resto. */
+
+.message-attachments {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.35rem;
+}
+
+.message-attachments__item {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.message-attachment {
+  display: flex;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: inherit;
+  text-decoration: none;
+}
+
+.message-attachment:hover {
+  border-color: var(--color-muted);
+}
+
+.message-attachment--image {
+  overflow: hidden;
+  background: var(--color-surface-muted);
+}
+
+/* Límites sin porcentajes: un max-width en % no achica el enlace, que se ajusta al ancho
+   natural de la imagen y deja un margen vacío. 6rem descuenta márgenes y avatar en móviles. */
+.message-attachment--image img {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: min(360px, calc(100vw - 6rem));
+  max-height: 280px;
+}
+
+.message-attachment--file {
+  align-items: center;
+  gap: 0.65rem;
+  width: 280px;
+  max-width: 100%;
+  padding: 0.55rem 0.65rem;
+}
+
+.message-attachment__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  border-radius: var(--radius-sm);
+  background: var(--color-accent-soft);
+  color: var(--color-accent-active);
+}
+
+.message-attachment__info {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.message-attachment__name {
+  overflow: hidden;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.message-attachment__size {
+  font-size: 0.8rem;
+  color: var(--color-muted);
+}
+
+.message-attachment__action {
+  display: inline-flex;
+  flex-shrink: 0;
+  color: var(--color-ink-soft);
 }
 
 .composer {
@@ -505,6 +593,77 @@
 
 @media (pointer: coarse) {
   .composer__tool {
+    width: var(--touch-target);
+    height: var(--touch-target);
+  }
+}
+
+.composer__separator {
+  align-self: center;
+  width: 1px;
+  height: 20px;
+  margin: 0 0.25rem;
+  background: var(--color-border);
+}
+
+.composer__files {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  padding: 0.5rem 0.5rem 0;
+}
+
+.composer__file {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  max-width: 100%;
+  padding: 0.2rem 0.25rem 0.2rem 0.6rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-muted);
+  font-size: 0.85rem;
+}
+
+.composer__file-name {
+  overflow: hidden;
+  max-width: 16rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.composer__file-size {
+  flex-shrink: 0;
+  color: var(--color-muted);
+}
+
+.composer__file-remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-ink-soft);
+  cursor: pointer;
+}
+
+.composer__file-remove:hover:not(:disabled) {
+  background: var(--color-border);
+  color: var(--color-ink);
+}
+
+.composer__file-remove:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+@media (pointer: coarse) {
+  .composer__file-remove {
     width: var(--touch-target);
     height: var(--touch-target);
   }
@@ -620,6 +779,24 @@
 
   .message {
     padding: 0.15rem 1rem;
+  }
+
+  .message-attachments__item--file,
+  .message-attachment--file {
+    width: 100%;
+  }
+
+  .message-attachment--image img {
+    max-height: 220px;
+  }
+
+  .composer__file {
+    flex: 1 1 100%;
+  }
+
+  .composer__file-name {
+    flex: 1;
+    max-width: none;
   }
 }
 

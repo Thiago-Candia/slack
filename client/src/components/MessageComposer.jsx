@@ -1,5 +1,6 @@
 import { useLayoutEffect, useRef, useState } from "react";
 import { useSubmit } from "../hooks/useSubmit";
+import { ACCEPT, addFiles, formatFileSize } from "../utils/attachments";
 import { applyFormat } from "../utils/messageFormat";
 import FormError from "./FormError";
 
@@ -13,14 +14,19 @@ const TOOLS = [
 
 const SHORTCUTS = { b: "bold", i: "italic", e: "code" };
 
+const fileKey = (file) => `${file.name}-${file.size}-${file.lastModified}`;
+
 const MessageComposer = ({ placeholder, onSend, disabled }) => {
   const [body, setBody] = useState("");
+  const [files, setFiles] = useState([]);
+  const [fileErrors, setFileErrors] = useState([]);
   const formRef = useRef(null);
   const textareaRef = useRef(null);
+  const fileInputRef = useRef(null);
   const pendingSelection = useRef(null);
   const { submit, pending, error } = useSubmit(onSend);
   const trimmed = body.trim();
-  const canSend = Boolean(trimmed) && !pending && !disabled;
+  const canSend = (Boolean(trimmed) || files.length > 0) && !pending && !disabled;
 
   useLayoutEffect(() => {
     const selection = pendingSelection.current;
@@ -40,12 +46,33 @@ const MessageComposer = ({ placeholder, onSend, disabled }) => {
     setBody(result.value);
   };
 
+  const handleFilesSelected = (event) => {
+    const selected = Array.from(event.target.files ?? []);
+    event.target.value = "";
+    if (!selected.length) return;
+
+    const result = addFiles(files, selected);
+    setFiles(result.files);
+    setFileErrors(result.errors);
+  };
+
+  const handleRemoveFile = (index) => {
+    setFiles((current) => current.filter((_, position) => position !== index));
+    setFileErrors([]);
+    textareaRef.current?.focus();
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (!canSend) return;
 
-    const result = await submit(trimmed);
-    if (result.ok) setBody("");
+    setFileErrors([]);
+    // Sin archivos se mantiene la firma onSend(body).
+    const result = files.length ? await submit(trimmed, files) : await submit(trimmed);
+    if (result.ok) {
+      setBody("");
+      setFiles([]);
+    }
   };
 
   const handleKeyDown = (event) => {
@@ -83,7 +110,60 @@ const MessageComposer = ({ placeholder, onSend, disabled }) => {
               </svg>
             </button>
           ))}
+          <span className="composer__separator" aria-hidden="true" />
+          <input
+            ref={fileInputRef}
+            className="visually-hidden"
+            type="file"
+            multiple
+            accept={ACCEPT}
+            tabIndex={-1}
+            aria-hidden="true"
+            onChange={handleFilesSelected}
+            disabled={disabled}
+            data-testid="composer-file-input"
+          />
+          <button
+            type="button"
+            className="composer__tool"
+            aria-label="Adjuntar archivo"
+            title="Adjuntar archivo (hasta 5, de 10 MB cada uno)"
+            disabled={disabled}
+            onClick={() => fileInputRef.current?.click()}
+          >
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false">
+              <path
+                fill="currentColor"
+                d="M16.5 6.5v10a4.5 4.5 0 0 1-9 0V6a3 3 0 0 1 6 0v9.5a1.5 1.5 0 0 1-3 0V7H9v8.5a3 3 0 0 0 6 0V6a4.5 4.5 0 0 0-9 0v10.5a6 6 0 0 0 12 0v-10z"
+              />
+            </svg>
+          </button>
         </div>
+        {files.length > 0 && (
+          <ul className="composer__files" aria-label="Archivos para enviar">
+            {files.map((file, index) => (
+              <li key={`${fileKey(file)}-${index}`} className="composer__file">
+                <span className="composer__file-name">{file.name}</span>
+                <span className="composer__file-size">{formatFileSize(file.size)}</span>
+                <button
+                  type="button"
+                  className="composer__file-remove"
+                  aria-label={`Quitar ${file.name}`}
+                  title="Quitar"
+                  disabled={pending}
+                  onClick={() => handleRemoveFile(index)}
+                >
+                  <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" focusable="false">
+                    <path
+                      fill="currentColor"
+                      d="m12 10.6 4.9-4.9 1.4 1.4-4.9 4.9 4.9 4.9-1.4 1.4-4.9-4.9-4.9 4.9-1.4-1.4 4.9-4.9-4.9-4.9 1.4-1.4z"
+                    />
+                  </svg>
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
         <div className="composer__row">
           <textarea
             ref={textareaRef}
@@ -107,6 +187,15 @@ const MessageComposer = ({ placeholder, onSend, disabled }) => {
         <p className="composer__status" role="status">
           Enviando...
         </p>
+      )}
+      {fileErrors.length > 0 && (
+        <div className="form-error" role="alert">
+          <ul>
+            {fileErrors.map((message) => (
+              <li key={message}>{message}</li>
+            ))}
+          </ul>
+        </div>
       )}
       <FormError error={error} />
     </form>

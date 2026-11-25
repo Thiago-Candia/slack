@@ -53,6 +53,28 @@ describe("Conversation", () => {
     expect(input).toHaveValue("");
   });
 
+  it("envía los archivos adjuntos y muestra el mensaje con ellos", async () => {
+    const attachment = {
+      id: 9,
+      filename: "informe.pdf",
+      content_type: "application/pdf",
+      byte_size: 1024,
+      url: "/rails/active_storage/blobs/redirect/x/informe.pdf",
+      download_url: "/rails/active_storage/blobs/redirect/x/informe.pdf?disposition=attachment"
+    };
+    const sendMessage = vi.fn((body) => Promise.resolve({ ...message(3, body), attachments: [attachment] }));
+    renderConversation({ loadMessages: () => Promise.resolve([]), sendMessage });
+    const user = userEvent.setup();
+    await screen.findByText(/todavía no hay mensajes/i);
+    const report = new File(["%PDF"], "informe.pdf", { type: "application/pdf" });
+
+    await user.upload(screen.getByTestId("composer-file-input"), report);
+    await user.click(screen.getByRole("button", { name: /enviar/i }));
+
+    expect(sendMessage).toHaveBeenCalledWith("", [report]);
+    expect(await screen.findByRole("link", { name: /informe\.pdf/ })).toBeInTheDocument();
+  });
+
   it("no envía mensajes vacíos", async () => {
     const sendMessage = vi.fn();
     renderConversation({ loadMessages: () => Promise.resolve([]), sendMessage });

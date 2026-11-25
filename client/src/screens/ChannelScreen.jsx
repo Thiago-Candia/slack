@@ -32,7 +32,7 @@ const ChannelScreen = () => {
       subtitle="Canal del espacio de trabajo"
       placeholder={`Escribe un mensaje en #${channel.name}`}
       loadMessages={() => channelService.getMessages(channel.id)}
-      sendMessage={(body) => channelService.sendMessage(channel.id, body)}
+      sendMessage={(body, files) => channelService.sendMessage(channel.id, body, files)}
       describeError={describeChannelError}
       subscription={{channel_id: channel.id}}
     />

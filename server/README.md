@@ -12,7 +12,7 @@ El frontend se desarrolla por separado en el Trabajo Práctico N.º 2 y consume 
 - PostgreSQL
 - Autenticación: `has_secure_password` (bcrypt) + JWT (gema `jwt`) para la API, sesión de
   cookie de Rails para el back-office
-- Active Storage (avatares de usuario, imagen de workspace)
+- Active Storage (avatares de usuario, imagen de workspace, adjuntos de mensajes)
 - Action Mailer + [Resend](https://resend.com) por SMTP (recuperación de contraseña)
 - `letter_opener_web` para ver los emails en desarrollo
 
@@ -59,6 +59,13 @@ La app queda disponible en `http://localhost:3000`. El back-office está en
 | `RESEND_API_KEY` | API key de Resend. Si está definida, los emails se envían por `smtp.resend.com` (desarrollo y producción) | Sin envío real: en desarrollo se ven en `/letter_opener` |
 | `MAILER_FROM` | Remitente de los emails | `onboarding@resend.dev` con Resend, `no-reply@slack-clone.test` sin SMTP |
 | `SMTP_ADDRESS`, `SMTP_PORT`, `SMTP_USERNAME`, `SMTP_PASSWORD` | Otro proveedor SMTP en lugar de Resend; tienen prioridad | Puerto `587` |
+| `STORAGE_BUCKET` | Bucket S3 compatible (AWS S3, Cloudflare R2, Backblaze B2…) para avatares, imágenes de workspace y adjuntos. Solo en producción | Disco local (`storage/`) |
+| `STORAGE_ENDPOINT` | Endpoint del proveedor, si no es AWS (ej. `https://<account>.r2.cloudflarestorage.com`) | Endpoint de AWS |
+| `STORAGE_REGION` | Región del bucket | `auto` |
+| `STORAGE_ACCESS_KEY_ID`, `STORAGE_SECRET_ACCESS_KEY` | Credenciales del bucket | — |
+
+En producción hace falta `STORAGE_BUCKET`: sin él los archivos se guardan en el disco del
+contenedor, que en Render se borra en cada deploy.
 
 Ninguna clave se sube al repositorio: se definen como variables de entorno.
 
@@ -115,7 +122,8 @@ La API usa JWT: `POST /api/v1/login` devuelve un `token` que se manda como
 - **Channel** — pertenece a un `Workspace`. `name`, `kind` (`public` / `private` / `direct`).
   Un canal `direct` representa una conversación 1 a 1 entre dos usuarios (no tiene nombre).
 - **ChannelMembership** — tabla de unión `User` ↔ `Channel`.
-- **Message** — pertenece a un `Channel` y a un `User` (autor). `body`.
+- **Message** — pertenece a un `Channel` y a un `User` (autor). `body` y hasta 5 archivos
+  adjuntos (`files`, Active Storage). Necesita texto o al menos un adjunto.
 
 Relaciones principales:
 
@@ -171,6 +179,52 @@ Todos responden JSON. Los marcados con 🔒 requieren `Authorization: Bearer <to
 |---|---|---|
 | GET | `/api/v1/workspaces/:workspace_id/direct_messages/:user_id` | Historial de DM con ese usuario (crea el canal directo si no existe) |
 | POST | `/api/v1/workspaces/:workspace_id/direct_messages/:user_id` | Enviar mensaje directo |
+
+**Adjuntos en mensajes**
+
+Los dos `POST` de mensajes (canal y directo) aceptan archivos. Sin adjuntos el body puede ser
+JSON (`{ "body": "Hola" }`); con adjuntos va como `multipart/form-data`:
+
+```bash
+curl -X POST http://localhost:3000/api/v1/channels/1/messages \
+  -H "Authorization: Bearer <token>" \
+  -F "body=Te paso el informe" \
+  -F "files[]=@informe.pdf" \
+  -F "files[]=@foto.png"
+```
+
+- Hasta **5 archivos** por mensaje, de hasta **10 MB** cada uno.
+- Tipos permitidos: PNG, JPEG, GIF, WebP, PDF, TXT, CSV, DOCX, XLSX, PPTX y ZIP. El tipo se
+  detecta por el contenido y el nombre del archivo; el que declara el navegador se ignora.
+- `body` puede quedar vacío si hay al menos un adjunto.
+- `files[]` solo acepta archivos subidos en el request: cualquier otro valor responde `422`.
+- Un archivo fuera de las reglas responde `422` con el motivo en `errors` y no se guarda nada.
+
+Cada mensaje (en las respuestas y en el evento `message.created` de Action Cable) incluye
+`attachments`, un array vacío si no tiene:
+
+```json
+{
+  "id": 12,
+  "body": "Te paso el informe",
+  "created_at": "2026-11-25T18:00:00.000Z",
+  "sender": { "id": 1, "name": "Ana", "email": "ana@example.com", "avatar_url": null },
+  "attachments": [
+    {
+      "id": 7,
+      "filename": "informe.pdf",
+      "content_type": "application/pdf",
+      "byte_size": 48213,
+      "url": "/rails/active_storage/blobs/redirect/…/informe.pdf",
+      "download_url": "/rails/active_storage/blobs/redirect/…/informe.pdf?disposition=attachment"
+    }
+  ]
+}
+```
+
+`url` y `download_url` son rutas relativas al server, firmadas y **sin autenticación**: quien
+tenga el enlace puede abrir el archivo hasta que vence, a las 24 horas. Al listar los mensajes
+se generan enlaces nuevos. Eliminar un mensaje borra también sus archivos.
 
 **Miembros** 🔒
 | Método | Ruta | Descripción |

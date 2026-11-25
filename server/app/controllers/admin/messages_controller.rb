@@ -2,7 +2,7 @@ class Admin::MessagesController < Admin::BaseController
   before_action :set_message, only: %i[show destroy]
 
   def index
-    @messages = Message.includes(:user, :channel).order(created_at: :desc)
+    @messages = Message.includes(:user, :channel).with_attached_files.order(created_at: :desc)
   end
 
   def show

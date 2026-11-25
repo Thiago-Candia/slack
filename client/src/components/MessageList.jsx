@@ -1,11 +1,14 @@
-import { Fragment, useEffect, useRef } from "react";
+import { Fragment, useCallback, useEffect, useRef } from "react";
 import { useWorkspaces } from "../context/WorkspaceContext";
 import { dayKey, dayLabel, formatMessageTime } from "../utils/format";
 import Avatar from "./Avatar";
 import FormattedMessage from "./FormattedMessage";
+import MessageAttachments from "./MessageAttachments";
 import { EmptyState, ErrorState, LoadingState } from "./StatusView";
 
 const GROUP_WINDOW_MS = 5 * 60 * 1000;
+// Distancia al final (en px) dentro de la cual se considera que la persona está leyendo lo último.
+const STICK_THRESHOLD = 80;
 
 const startsDay = (message, previous) => !previous || dayKey(message.created_at) !== dayKey(previous.created_at);
 
@@ -17,11 +20,22 @@ const startsGroup = (message, previous) => {
 
 const MessageList = ({ status, messages, error, errorMessage, onRetry }) => {
   const endRef = useRef(null);
+  const stickToEnd = useRef(true);
   const user = useWorkspaces()?.user;
 
   useEffect(() => {
     endRef.current?.scrollIntoView?.({ block: "end" });
   }, [messages.length]);
+
+  const handleScroll = (event) => {
+    const { scrollHeight, scrollTop, clientHeight } = event.currentTarget;
+    stickToEnd.current = scrollHeight - scrollTop - clientHeight <= STICK_THRESHOLD;
+  };
+
+  // Una imagen que termina de cargar agranda la lista: si la persona estaba al final, se mantiene ahí.
+  const handleMediaLoad = useCallback(() => {
+    if (stickToEnd.current) endRef.current?.scrollIntoView?.({ block: "end" });
+  }, []);
 
   if (status === "loading") {
     return (
@@ -57,7 +71,7 @@ const MessageList = ({ status, messages, error, errorMessage, onRetry }) => {
   }
 
   return (
-    <div className="message-list" role="log" aria-label="Mensajes">
+    <div className="message-list" role="log" aria-label="Mensajes" onScroll={handleScroll}>
       <ol className="message-list__items">
         {messages.map((message, index) => {
           const previous = messages[index - 1];
@@ -94,9 +108,12 @@ const MessageList = ({ status, messages, error, errorMessage, onRetry }) => {
                       </time>
                     </p>
                   )}
-                  <div className="message__body">
-                    <FormattedMessage text={message.body} />
-                  </div>
+                  {message.body?.trim() && (
+                    <div className="message__body">
+                      <FormattedMessage text={message.body} />
+                    </div>
+                  )}
+                  <MessageAttachments attachments={message.attachments} onMediaLoad={handleMediaLoad} />
                 </div>
               </li>
             </Fragment>

@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { render, screen, within } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 import MessageList from "./MessageList";
 
 vi.mock("../context/WorkspaceContext", () => ({
@@ -82,6 +82,88 @@ describe("MessageList", () => {
 
     expect(within(meta).getByText(/^\d{2}:\d{2}/)).toBeInTheDocument();
     expect(meta).not.toHaveTextContent(/oct/i);
+  });
+
+  describe("adjuntos", () => {
+    const photo = {
+      id: 10,
+      filename: "foto.png",
+      content_type: "image/png",
+      byte_size: 2048,
+      url: "/rails/active_storage/blobs/redirect/abc/foto.png",
+      download_url: "/rails/active_storage/blobs/redirect/abc/foto.png?disposition=attachment"
+    };
+    const report = {
+      id: 11,
+      filename: "informe.pdf",
+      content_type: "application/pdf",
+      byte_size: 3 * 1024 * 1024,
+      url: "/rails/active_storage/blobs/redirect/def/informe.pdf",
+      download_url: "/rails/active_storage/blobs/redirect/def/informe.pdf?disposition=attachment"
+    };
+    const withAttachments = (body, attachments) => ({ ...message(1, body, bruno, at(14, 9)), attachments });
+
+    it("muestra las imágenes en la conversación con un enlace para abrirlas", () => {
+      render(<MessageList status="ready" messages={[withAttachments("Mirá", [photo])]} />);
+
+      const image = screen.getByRole("img", { name: "foto.png" });
+      expect(image.getAttribute("src")).toMatch(/\/rails\/active_storage\/blobs\/redirect\/abc\/foto\.png$/);
+      expect(image.closest("a")).toHaveAttribute("target", "_blank");
+      expect(image.closest("a")).toHaveAttribute("rel", expect.stringContaining("noopener"));
+    });
+
+    it("muestra el resto de los archivos como enlace de descarga con nombre y tamaño", () => {
+      render(<MessageList status="ready" messages={[withAttachments("Te paso el informe", [report])]} />);
+
+      const link = screen.getByRole("link", { name: /informe\.pdf/ });
+      expect(link).toHaveTextContent("3 MB");
+      expect(link).toHaveTextContent("Descargar");
+      expect(link.getAttribute("href")).toMatch(/disposition=attachment$/);
+      expect(screen.queryByRole("img", { name: "informe.pdf" })).not.toBeInTheDocument();
+    });
+
+    it("un mensaje solo con adjuntos no muestra un cuerpo vacío", () => {
+      const { container } = render(<MessageList status="ready" messages={[withAttachments("", [report])]} />);
+
+      expect(container.querySelector(".message__body")).not.toBeInTheDocument();
+      expect(screen.getByText("informe.pdf")).toBeInTheDocument();
+    });
+
+    it("los mensajes sin el campo attachments se siguen mostrando", () => {
+      const { container } = render(<MessageList status="ready" messages={[message(1, "Viejo", bruno, at(14, 9))]} />);
+
+      expect(screen.getByText("Viejo")).toBeInTheDocument();
+      expect(container.querySelector(".message-attachments")).not.toBeInTheDocument();
+    });
+
+    it("vuelve al final cuando carga una imagen si la persona estaba leyendo lo último", () => {
+      const scrollIntoView = vi.fn();
+      const original = Element.prototype.scrollIntoView;
+      Element.prototype.scrollIntoView = scrollIntoView;
+
+      try {
+        render(<MessageList status="ready" messages={[withAttachments("Mirá", [photo])]} />);
+        scrollIntoView.mockClear();
+
+        fireEvent.load(screen.getByRole("img", { name: "foto.png" }));
+        expect(scrollIntoView).toHaveBeenCalledTimes(1);
+
+        // Si subió a leer mensajes anteriores, la carga de una imagen no la mueve.
+        const log = screen.getByRole("log");
+        Object.defineProperties(log, {
+          scrollHeight: { configurable: true, value: 2000 },
+          clientHeight: { configurable: true, value: 500 },
+          scrollTop: { configurable: true, value: 100 }
+        });
+        fireEvent.scroll(log);
+        scrollIntoView.mockClear();
+
+        fireEvent.load(screen.getByRole("img", { name: "foto.png" }));
+        expect(scrollIntoView).not.toHaveBeenCalled();
+      } finally {
+        Element.prototype.scrollIntoView = original;
+      }
+    });
   });
 
   it("muestra el estado vacío con su ícono", () => {

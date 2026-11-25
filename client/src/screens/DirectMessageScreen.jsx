@@ -26,7 +26,7 @@ const DirectMessageScreen = () => {
       subtitle={isSelf ? "Tu espacio personal: notas y borradores" : member.email}
       placeholder={`Escribe un mensaje a ${member.name}`}
       loadMessages={() => directMessageService.getMessages(workspace.id, member.id)}
-      sendMessage={(body) => directMessageService.sendMessage(workspace.id, member.id, body)}
+      sendMessage={(body, files) => directMessageService.sendMessage(workspace.id, member.id, body, files)}
       subscription={{workspace_id: workspace.id, user_id: member.id}}
     />
   );

@@ -11,3 +11,12 @@ es:
         name: Nombre
       message:
         body: Mensaje
+        files: Archivos adjuntos
+    errors:
+      models:
+        message:
+          attributes:
+            files:
+              too_many: "no pueden ser más de %{count} por mensaje"
+              too_large: "no pueden superar los %{max} MB (%{filename})"
+              content_type: "solo pueden ser imágenes PNG, JPG, GIF o WebP, PDF, TXT, CSV, Word, Excel, PowerPoint o ZIP (%{filename})"
