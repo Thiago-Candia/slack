@@ -48,3 +48,6 @@ coverage/
 Thumbs.db
 desktop.ini
 *.swp
+
+# Local deploy guide (not tracked)
+DEPLOY.md

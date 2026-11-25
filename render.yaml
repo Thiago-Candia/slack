@@ -1,5 +1,5 @@
 # Render Blueprint: API (Rails, Docker) + PostgreSQL.
-# The client (client/) is deployed on Vercel. See DEPLOY.md.
+# The client (client/) is deployed on Vercel.
 databases:
   - name: slack-db
     plan: free
