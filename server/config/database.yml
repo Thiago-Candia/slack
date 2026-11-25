@@ -85,20 +85,10 @@ test:
 # for a full overview on how database connection configuration can be specified.
 #
 production:
-  primary: &primary_production
-    <<: *default
-    database: server_production
-    username: server
-    password: <%= ENV["SERVER_DATABASE_PASSWORD"] %>
-  cache:
-    <<: *primary_production
-    database: server_production_cache
-    migrations_paths: db/cache_migrate
-  queue:
-    <<: *primary_production
-    database: server_production_queue
-    migrations_paths: db/queue_migrate
-  cable:
-    <<: *primary_production
-    database: server_production_cable
-    migrations_paths: db/cable_migrate
+  # A single PostgreSQL database holds the app tables and the Solid Queue, Solid Cache and
+  # Solid Cable tables. On Render (or any PaaS) DATABASE_URL comes from the database service
+  # and takes precedence over the values below.
+  <<: *default
+  database: server_production
+  username: server
+  password: <%= ENV["SERVER_DATABASE_PASSWORD"] %>
