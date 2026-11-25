@@ -12,6 +12,7 @@ Clon de Slack con espacios de trabajo, canales y mensajes directos.
 
 - El backend expone la API REST en `/api/v1` con autenticación JWT y mantiene el back-office en `/admin`.
 - El frontend consume esa API: registro, inicio de sesión, recuperación de contraseña, workspaces, invitaciones, canales, mensajes, mensajes directos y perfil.
+- Los emails (recuperación de contraseña) se envían con [Resend](https://resend.com) por SMTP. En desarrollo, sin API key, se ven en `http://localhost:3000/letter_opener`. Ver [Emails](#emails-en-desarrollo).
 
 ## Rutas del frontend
 
