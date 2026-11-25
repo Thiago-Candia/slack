@@ -11,10 +11,10 @@ Todo tiene plan gratuito. Ninguna clave se sube al repositorio: se cargan en el 
 
 Render y Vercel despliegan la rama por defecto del repositorio (`main`). Mergeá primero en `develop` y después `develop` en `main`:
 
-- [ ] #26 – restablecimiento de contraseña y Resend (`25-fix/password-reset-mail`)
-- [ ] #27 – base de datos única con Solid Queue, Cache y Cable (`27-fix/single-production-database`)
-- [ ] #28 – esta configuración de deploy (`28-chore/render-vercel-deploy`)
-- [ ] #9 – mensajes en tiempo real con Action Cable (`8-feat/websocket`)
+- [x] PR #9 – mensajes en tiempo real con Action Cable (`8-feat/websocket`)
+- [ ] PR #26 – restablecimiento de contraseña y Resend (`25-fix/password-reset-mail`)
+- [ ] PR #29 – base de datos única con Solid Queue, Cache y Cable (`27-fix/single-production-database`)
+- [ ] PR #30 – esta configuración de deploy (`28-chore/render-vercel-deploy`)
 
 ## 1. Resend (emails)
 
@@ -62,7 +62,7 @@ En Render → `slack-api` → **Environment**, definí `FRONTEND_URL` con la URL
 `FRONTEND_URL` se usa para:
 - CORS: el navegador solo acepta respuestas de la API para ese origen.
 - El link del email de recuperación de contraseña.
-- Los orígenes permitidos de Action Cable (tiempo real), una vez mergeado #9.
+- Los orígenes permitidos de Action Cable (tiempo real).
 
 ## 6. Verificación
 
