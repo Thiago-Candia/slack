@@ -41,7 +41,7 @@ const WorkspaceScreen = () => {
   if (status === "loading") {
     return (
       <div className="page page--center">
-        <LoadingState>Cargando espacio de trabajo...</LoadingState>
+        <LoadingState showLabel>Cargando espacio de trabajo...</LoadingState>
       </div>
     );
   }

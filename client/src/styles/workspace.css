@@ -118,10 +118,15 @@
   border-radius: var(--radius-sm);
   color: var(--color-ink-soft);
   text-decoration: none;
+  transition: background-color var(--transition), color var(--transition);
 }
 
 .sidebar-link:hover {
   background: rgb(43 43 38 / 8%);
+}
+
+.sidebar-link:active {
+  background: rgb(43 43 38 / 14%);
 }
 
 .sidebar-link--active,
