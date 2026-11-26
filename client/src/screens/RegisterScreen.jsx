@@ -19,8 +19,6 @@ import {
   validateRequired
 } from "../utils/validation";
 
-// La API de registro no recibe imagen: si la persona eligió una, se sube con el perfil apenas existe la cuenta.
-// Si esa subida falla, la cuenta ya está creada: se avisa y la imagen se puede cambiar después desde el perfil.
 const registerAccount = async ({ avatar, ...credentials }) => {
   const data = await authService.register(credentials);
 
@@ -28,7 +26,6 @@ const registerAccount = async ({ avatar, ...credentials }) => {
 
   const formData = new FormData();
   formData.append("avatar", avatar);
-  // El token se guarda antes de la subida para que httpClient la autentique; login() lo vuelve a guardar después.
   setToken(data.token);
   const avatarSaved = await profileService.update(formData).then(
     () => true,
@@ -44,7 +41,6 @@ const RegisterScreen = () => {
   const [avatar, setAvatar] = useState(null);
   const [fieldErrors, setFieldErrors] = useState({});
   const { submit, pending, error } = useSubmit(registerAccount);
-  // Token de una cuenta creada cuya foto no se pudo subir: se entra al confirmar el aviso.
   const [pendingToken, setPendingToken] = useState(null);
 
   const handleChange = (event) => setForm((previous) => ({ ...previous, [event.target.name]: event.target.value }));

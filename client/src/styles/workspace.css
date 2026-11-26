@@ -45,8 +45,6 @@
   display: none;
 }
 
-/* Rail de espacios de trabajo */
-
 .rail {
   width: 72px;
   flex-shrink: 0;
@@ -124,8 +122,6 @@
   cursor: pointer;
 }
 
-/* Buscador */
-
 .search {
   flex: 1;
   display: flex;
@@ -157,8 +153,6 @@
 .search__input:focus-visible {
   outline: none;
 }
-
-/* Barra lateral */
 
 .sidebar {
   width: 260px;
@@ -276,8 +270,6 @@
   background: var(--color-accent-soft);
 }
 
-/* Bienvenida */
-
 .welcome {
   display: flex;
   flex-direction: column;
@@ -298,8 +290,6 @@
   flex-wrap: wrap;
   gap: 0.75rem;
 }
-
-/* Conversación */
 
 .conversation {
   flex: 1;
@@ -567,8 +557,6 @@
 .composer .form-error {
   margin-top: 0.5rem;
 }
-
-/* Pantallas chicas: la barra lateral se abre como panel. */
 
 @media (max-width: 768px) {
   .workspace__menu,

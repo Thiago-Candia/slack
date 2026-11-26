@@ -49,7 +49,6 @@ describe("MessageList", () => {
     const separators = document.querySelectorAll(".message-day");
 
     expect([...separators].map((item) => item.textContent)).toEqual(["Ayer", "Hoy"]);
-    // Los separadores no cuentan como mensajes para los lectores de pantalla.
     expect(screen.getAllByRole("listitem")).toHaveLength(3);
   });
 

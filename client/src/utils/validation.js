@@ -22,7 +22,6 @@ export const validateNewPassword = (password) => {
 export const validatePasswordConfirmation = (password, confirmation) =>
   password === confirmation ? null : "Las contraseñas no coinciden.";
 
-// Ayuda visual: la regla de validación sigue siendo solo la longitud mínima.
 export const getPasswordStrength = (password) => {
   if (!password) return null;
   if (password.length < MIN_PASSWORD_LENGTH) return { level: "weak", label: "Débil", score: 1 };
