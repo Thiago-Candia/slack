@@ -23,7 +23,6 @@ const WorkspaceScreen = () => {
   const channels = useResource(() => channelService.getByWorkspace(workspaceId), workspaceId);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [openModal, setOpenModal] = useState(null);
-  // La búsqueda pertenece al espacio en el que se escribió: al cambiar de espacio arranca vacía, sin un efecto extra.
   const [search, setSearch] = useState({ workspaceId, query: "" });
   const query = search.workspaceId === workspaceId ? search.query : "";
   const setQuery = (value) => setSearch({ workspaceId, query: value });

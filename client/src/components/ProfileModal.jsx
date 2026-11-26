@@ -26,8 +26,6 @@ const ProfileModal = ({ onClose }) => {
   const editButtonRef = useRef(null);
   const wasEditing = useRef(false);
 
-  // Al volver de la edición, el foco regresa a "Editar". No se enfoca al abrir el modal:
-  // Modal guarda el elemento enfocado en ese momento para devolverle el foco al cerrar.
   useEffect(() => {
     if (wasEditing.current && !isEditing) editButtonRef.current?.focus();
     wasEditing.current = isEditing;

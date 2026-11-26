@@ -2,7 +2,6 @@ import { getPasswordStrength } from "../utils/validation";
 
 const LEVELS = 3;
 
-// Siempre renderiza el contenedor para que el lector de pantalla anuncie los cambios.
 const PasswordStrength = ({ password }) => {
   const strength = getPasswordStrength(password);
 

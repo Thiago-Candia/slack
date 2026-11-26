@@ -2,7 +2,6 @@ const timeFormatter = new Intl.DateTimeFormat("es-AR", { hour: "2-digit", minute
 const dayFormatter = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "long" });
 const dayWithYearFormatter = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "long", year: "numeric" });
 
-// Colores de fondo y texto para las iniciales. Todos tienen contraste suficiente.
 const AVATAR_COLORS = [
   { background: "#fbe8de", color: "#8a2e08" },
   { background: "#e6f4ec", color: "#14532d" },

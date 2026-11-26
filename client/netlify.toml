@@ -1,9 +1,7 @@
-# Netlify config for the client (base directory: client).
 [build]
   command = "npm run build"
   publish = "dist"
 
-# SPA: serve index.html for every route (/login, /join/:token, ...) so React Router handles it.
 [[redirects]]
   from = "/*"
   to = "/index.html"

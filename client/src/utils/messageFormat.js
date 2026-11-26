@@ -1,14 +1,7 @@
-// Formato de mensajes: *negrita*, _cursiva_, `código`, [texto](https://url) y listas con "- ".
-// El servidor guarda el texto tal cual; solo se interpreta al mostrarlo.
-
-// Sin lookbehind: Safari anterior a 16.4 no lo soporta y el bundle fallaría al cargar.
-// Las URL sueltas se capturan para dejarlas como texto y que sus "_" o "*" no se interpreten.
-// Negrita y cursiva exigen que el contenido no empiece ni termine con espacio ("2 * 3 * 4" queda igual).
 const INLINE =
   /`([^`\n]+)`|\[([^\]\n]+)\]\((https?:\/\/(?:[^\s()]|\([^\s()]*\))+)\)|(https?:\/\/\S+)|\*([^\s*](?:[^*\n]*[^\s*])?)\*(?![\w*])|_([^\s_](?:[^_\n]*[^\s_])?)_(?![\w_])/g;
 const LIST_ITEM = /^- (.*)$/;
 const WRAPPERS = { bold: "*", italic: "_", code: "`" };
-// Una marca pegada a una letra o a otra marca no abre formato (snake_case, **doble**).
 const BLOCKED_BEFORE = { "*": /[\w*]/, _: /[\w_]/ };
 
 export const parseInline = (text) => {
@@ -80,7 +73,6 @@ export const parseMessage = (text) => {
   return blocks;
 };
 
-// Devuelve el texto nuevo y la selección que debe quedar en el textarea.
 export const applyFormat = (kind, value, start, end) => {
   const selected = value.slice(start, end);
 
@@ -108,7 +100,6 @@ export const applyFormat = (kind, value, start, end) => {
 
   if (kind === "list") {
     const lineStart = start === 0 ? 0 : value.lastIndexOf("\n", start - 1) + 1;
-    // Si la selección termina justo después de un salto de línea, la línea siguiente no está seleccionada.
     const lastSelected = end > start && value[end - 1] === "\n" ? end - 1 : end;
     const nextBreak = value.indexOf("\n", lastSelected);
     const lineEnd = nextBreak === -1 ? value.length : nextBreak;
