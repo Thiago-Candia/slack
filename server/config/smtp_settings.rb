@@ -1,8 +1,3 @@
-# SMTP settings shared by the development and production environments.
-#
-# With RESEND_API_KEY, emails go through Resend (https://resend.com).
-# Any other provider works with SMTP_ADDRESS, SMTP_PORT, SMTP_USERNAME and SMTP_PASSWORD.
-# Without any of them, this returns nil and the environment keeps its default delivery method.
 module SmtpSettings
   RESEND_ADDRESS = "smtp.resend.com".freeze
   RESEND_USERNAME = "resend".freeze

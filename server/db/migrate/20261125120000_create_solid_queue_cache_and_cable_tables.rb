@@ -1,5 +1,3 @@
-# Solid Queue, Solid Cache and Solid Cable share the primary database in production,
-# so their tables are created by a regular migration instead of separate schema files.
 class CreateSolidQueueCacheAndCableTables < ActiveRecord::Migration[8.1]
   def change
     create_table "solid_queue_blocked_executions" do |t|
