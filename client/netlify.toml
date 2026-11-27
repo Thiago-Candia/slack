@@ -1,6 +1,7 @@
 # Netlify config for the client (base directory: client).
 [build]
-  command = "npm run build"
+  # Netlify installs deps with pnpm (detected via pnpm-lock.yaml; version pinned by packageManager).
+  command = "pnpm build"
   publish = "dist"
 
 # SPA: serve index.html for every route (/login, /join/:token, ...) so React Router handles it.
