@@ -110,7 +110,7 @@ Beneficios de Action Cable:
 
 ## Requisitos
 
-- Node.js 20 o superior
+- Node.js 20 o superior y pnpm (se habilita con `corepack enable`; ver `client/README.md`)
 - Ruby 3.3.10
 - PostgreSQL
 
@@ -121,11 +121,12 @@ Beneficios de Action Cable:
 ```bash
 cd client
 cp .env.example .env
-npm install
-npm run dev
+corepack enable
+pnpm install
+pnpm dev
 ```
 
-Se sirve en `http://localhost:5173`.
+Se sirve en `http://localhost:5173`. El client usa pnpm: `npm install` está bloqueado. Si ya tenías el repo instalado con npm, ver [Migrar desde npm](client/README.md#migrar-desde-npm).
 
 ### Backend
 
@@ -181,12 +182,12 @@ Nunca se suben al repositorio. Solo se versionan los archivos `.env.example`.
 
 | Comando | Acción |
 |---|---|
-| `npm run dev` | Servidor de desarrollo |
-| `npm run build` | Build de producción en `client/dist` |
-| `npm run lint` | ESLint |
-| `npm test` | Tests con Vitest y Testing Library |
-| `npm run test:watch` | Tests en modo observador |
-| `npm run preview` | Sirve el build localmente |
+| `pnpm dev` | Servidor de desarrollo |
+| `pnpm build` | Build de producción en `client/dist` |
+| `pnpm lint` | ESLint |
+| `pnpm test` | Tests con Vitest y Testing Library |
+| `pnpm test:watch` | Tests en modo observador |
+| `pnpm preview` | Sirve el build localmente |
 
 ## Deploy
 
