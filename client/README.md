@@ -6,7 +6,7 @@ Cliente web en React para la API de `server/`. Permite crear una cuenta, entrar 
 
 ## Índice
 
-1. [Inicio rápido](#inicio-rápido)
+1. [Inicio rápido](#inicio-rápido) (incluye [Migrar desde npm](#migrar-desde-npm))
 2. [Scripts](#scripts)
 3. [Variables de entorno](#variables-de-entorno)
 4. [Stack](#stack)
@@ -27,6 +27,7 @@ Para tener la app andando en tu máquina.
 **Requisitos**
 
 - Node.js 20.19 o superior (o 22.12 o superior).
+- pnpm, en la versión fijada en `packageManager` de `package.json`. Se habilita con `corepack enable` (viene con Node): Corepack usa esa versión automáticamente, sin instalar pnpm a mano.
 - El backend corriendo en `http://localhost:3000` (ver el README de la raíz).
 
 **Pasos**
@@ -34,9 +35,12 @@ Para tener la app andando en tu máquina.
 ```bash
 cd client
 cp .env.example .env
-npm install
-npm run dev
+corepack enable
+pnpm install
+pnpm dev
 ```
+
+El proyecto usa solo pnpm: `npm install` y `yarn` fallan a propósito (script `preinstall`).
 
 Abrí `http://localhost:5173`. Usá `localhost` y no `127.0.0.1`: el backend solo acepta pedidos (CORS) y conexiones WebSocket desde `http://localhost:5173`.
 
@@ -47,18 +51,31 @@ Abrí `http://localhost:5173`. Usá `localhost` y no `127.0.0.1`: el backend sol
 | `admin@example.com` | `password123` |
 | `ana@example.com` | `password123` |
 
+### Migrar desde npm
+
+Si ya tenías el repo instalado con npm:
+
+```bash
+cd client
+corepack enable
+rm -rf node_modules
+pnpm install
+```
+
+`package-lock.json` ya no se usa: el lockfile es `pnpm-lock.yaml`.
+
 ## Scripts
 
 Comandos disponibles en `package.json`.
 
 | Comando | Qué hace |
 |---|---|
-| `npm run dev` | Levanta el servidor de desarrollo en el puerto 5173. |
-| `npm run build` | Genera el build de producción en `dist/`. |
-| `npm run preview` | Sirve el build de `dist/` para probarlo. |
-| `npm run lint` | Revisa el código con ESLint. |
-| `npm test` | Corre todos los tests una vez. |
-| `npm run test:watch` | Corre los tests y los repite al guardar cambios. |
+| `pnpm dev` | Levanta el servidor de desarrollo en el puerto 5173. |
+| `pnpm build` | Genera el build de producción en `dist/`. |
+| `pnpm preview` | Sirve el build de `dist/` para probarlo. |
+| `pnpm lint` | Revisa el código con ESLint. |
+| `pnpm test` | Corre todos los tests una vez. |
+| `pnpm test:watch` | Corre los tests y los repite al guardar cambios. |
 
 ## Variables de entorno
 
