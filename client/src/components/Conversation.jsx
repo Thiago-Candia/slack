@@ -30,8 +30,9 @@ const Conversation = ({ title, subtitle, placeholder, loadMessages, sendMessage,
     }
   });
 
-  const handleSend = async (body) => {
-    const message = await sendMessage(body);
+  // Recibe (body) o (body, files), según el composer haya adjuntado archivos.
+  const handleSend = async (...args) => {
+    const message = await sendMessage(...args);
     addMessage(message);
   };
 

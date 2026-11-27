@@ -1,5 +1,16 @@
 <h1>Mensaje</h1>
 <p><%= @message.user.name %> en <%= @message.channel.name || "Directo" %></p>
 <p><%= @message.body %></p>
+<% if @message.files.attached? %>
+  <h2>Archivos adjuntos</h2>
+  <ul>
+    <% @message.files.each do |file| %>
+      <li>
+        <%= link_to file.filename.to_s, rails_blob_path(file.blob, disposition: "attachment") %>
+        (<%= file.content_type %>, <%= number_to_human_size(file.byte_size) %>)
+      </li>
+    <% end %>
+  </ul>
+<% end %>
 <%= button_to "Eliminar", admin_message_path(@message), method: :delete %>
 <%= link_to "Volver", admin_messages_path %>
